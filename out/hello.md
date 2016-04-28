@@ -8,28 +8,29 @@ main : IO ()
 
 Add a hole to stand in place of a conversion.
 
-```idris
+``` idris
 main = putStrLn (?convert 'x')
 ```
 
-Reload and Type Check
-=====================
+An appropriate `Char -> String` function to fill the `convert` hole is [`cast`](http://www.idris-lang.org/docs/current/prelude_doc/docs/Prelude.Cast.html#Prelude.Cast.cast).
 
-Reload the module in a running REPL.
-
-``` idris
-*src/hello> :r
-Type checking ./src/hello.lidr
-Holes: Main.convert
+```idris
+main = putStrLn (cast 'x')
 ```
 
-Check the type of the `convert` hole.
+Compile and Run
+===============
 
-``` idris
-*src/hello> :t convert
---------------------------------------
-convert : Char -> String
-Holes: Main.convert
+Compile:
+
+``` fish
+$ make compile
+idris src/hello.lidr -o bin/hello
 ```
 
-As expected, the success typing of `convert` is `Char -> String`.
+Run:
+
+``` fish
+$ bin/hello
+x
+```
