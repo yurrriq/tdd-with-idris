@@ -1,44 +1,65 @@
 hello.lidr
 ==========
 
-The module header is rather straightforward.
-
 ```idris
 module Main
-```
-
-Function declarations are a lot like Haskell, except `::` is replaced with `:`.
-
-```idris
 main : IO ()
 ```
 
-Function definitions, too, are straightforward.
+Idris supports incomplete definitions with holes.
 
 ```idris
-main = putStrLn "Hello, Idris World!"
+main = putStrLn ?greeting
 ```
 
-Compile
-=======
+In the example above, `?greeting` is a hole that can be filled by a `String`.
 
-To compile this file:
+Interact
+========
+
+Load the module into a REPL.
 
 ``` fish
-$ idris src/hello.idr -o bin/hello
+$ idris src/hello.idr
 ```
 
-... or use `make`:
-
-``` fish
-$ make bin/hello
+``` idris
+Type checking ./src/hello.lidr
+Holes: Main.greeting
 ```
 
-Run
-===
+Type check `greeting`
 
-``` fish
-$ bin/hello
+``` idris
+*src/hello> :t greeting
+--------------------------------------
+greeting : String
+Holes: Main.greeting
 ```
 
-    Hello, Idris World!
+A naïve attempt to evaluate `greeting` results in an error.
+
+``` idris
+*src/hello> greeting
+(input):1:1-9:INTERNAL ERROR: Can't find name greeting
+This is probably a bug, or a missing error message.
+Please consider reporting at https://github.com/idris-lang/Idris-dev/issues
+Holes: Main.greeting
+```
+
+Note to self: Consider reporting this potential bug.
+
+To actually evaluate `greeting`, I had to use its fully-qualified name.
+
+``` idris
+*src/hello> Main.greeting
+?greeting : String
+Holes: Main.greeting
+```
+
+Bye bye
+
+``` idris
+*src/hello> :q
+Bye bye
+```
