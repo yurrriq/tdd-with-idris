@@ -6,60 +6,27 @@ module Main
 main : IO ()
 ```
 
-Idris supports incomplete definitions with holes.
+The following results in a type error, since a `Char` is not a `String`.
 
 ```idris
-main = putStrLn ?greeting
+main = putStrLn 'x'
 ```
 
-In the example above, `?greeting` is a hole that can be filled by a `String`.
+Reload and Explode
+==================
 
-Interact
-========
-
-Load the module into a REPL.
-
-``` fish
-$ idris src/hello.idr
-```
+Reload the module in a running REPL.
 
 ``` idris
+*src/hello> :r
 Type checking ./src/hello.lidr
-Holes: Main.greeting
-```
+./src/hello.lidr:8:17:When checking right hand side of main with expected type
+        IO ()
 
-Type check `greeting`
-
-``` idris
-*src/hello> :t greeting
---------------------------------------
-greeting : String
-Holes: Main.greeting
-```
-
-A naïve attempt to evaluate `greeting` results in an error.
-
-``` idris
-*src/hello> greeting
-(input):1:1-9:INTERNAL ERROR: Can't find name greeting
-This is probably a bug, or a missing error message.
-Please consider reporting at https://github.com/idris-lang/Idris-dev/issues
-Holes: Main.greeting
-```
-
-Note to self: Consider reporting this potential bug.
-
-To actually evaluate `greeting`, I had to use its fully-qualified name.
-
-``` idris
-*src/hello> Main.greeting
-?greeting : String
-Holes: Main.greeting
-```
-
-Bye bye
-
-``` idris
-*src/hello> :q
-Bye bye
+When checking an application of function Prelude.Interactive.putStrLn:
+        Type mismatch between
+                Char (Type of 'x')
+        and
+                String (Expected type)
+Holes: Main.main
 ```
