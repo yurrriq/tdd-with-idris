@@ -1,6 +1,7 @@
 = hello.lidr
 
 > module Main
+>
 > main : IO ()
 
 Add a hole to stand in place of a conversion.

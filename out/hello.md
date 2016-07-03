@@ -3,6 +3,7 @@ hello.lidr
 
 ```idris
 module Main
+
 main : IO ()
 ```
 
