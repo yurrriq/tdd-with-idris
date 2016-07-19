@@ -47,6 +47,7 @@ parseCommand "add"    str   = Just (Add str)
 parseCommand "get"    val   = if   all isDigit (unpack val)
                               then Just $ Get (cast val)
                               else Nothing
+-- parseCommand "search" ""    = Nothing
 parseCommand "search" query = Just (Search query)
 parseCommand "quit"   ""    = Just Quit
 parseCommand _        _     = Nothing
@@ -72,15 +73,17 @@ getEntry id store with (integerToFin id (size store))
   | Nothing = Just ("Out of range\n", store)
   | Just i  = Just (index i (items store) ++ "\n", store)
 
-doSearch : (query : String)
-         -> (item : String) -> (matches : List String)
-         -> List String
-doSearch query item = if query `isInfixOf` toLower item then (::) item else id
+doSearch : (query : String) -> Vect n String -> List (Nat, String)
+doSearch query [] = []
+doSearch query (item::items) =
+  let matches = map (\(k,x) => (S k, x)) $ doSearch query items
+  in  if query `isInfixOf` toLower item then (Z, item) :: matches else matches
 
 search : (query : String) -> (store : DataStore) -> REPLResponse
-search query store with (foldr (doSearch (toLower query)) [] (items store))
+search query store with (doSearch query (items store))
   | []      = Just ("Not found\n", store)
-  | matches = Just (unwords matches ++ "\n", store)
+  | matches = Just (unwords (map go matches) ++ "\n", store)
+      where go (k,x) = "(" ++ show k ++ ", " ++ x ++ ")"
 
 ||| Process user input from the REPL.
 ||| @ store a data store
@@ -90,7 +93,7 @@ processInput store input with (parse input)
   | Nothing             = Just ("Invalid command\n", store)
   | Just (Add    item)  = addItem  item store
   | Just (Get    id)    = getEntry id   store
-  | Just (Search query) = search   query store
+  | Just (Search query) = search   (toLower query) store
   | Just Quit           = Nothing
 
 ||| Run a REPL, processing commands and maintaing a data store.
