@@ -10,7 +10,7 @@ import Data.Vect
 record DataStore where
   constructor Data
   ||| The number or stored items.
-  size  : Nat
+  size  : Nat                   -- N.B. This covers Exercise 4.3.5.1.
   ||| The contents of the store.
   items : Vect size String
 
@@ -29,10 +29,13 @@ addToStore (Data _ items) item = Data _ (items ++ [item])
 ||| An data store command.
 data Command = ||| Add an item.
                ||| @ item an item to add.
-               Add String
+               Add    String
              | ||| Get an item by ID.
                ||| @ id an ID to look up.
-               Get Integer
+               Get    Integer
+             | ||| Search the data store for entries containing a substring.
+               ||| @ query a substring to match.
+               Search String
              | ||| Quit the REPL.
                Quit
 
@@ -40,12 +43,13 @@ data Command = ||| Add an item.
 ||| @ cmd  a string to attempt to parse as a command.
 ||| @ args arguments to pass to a parsed command.
 parseCommand : (cmd, args : String) -> Maybe Command
-parseCommand "add" str = Just (Add str)
-parseCommand "get" val with (all isDigit (unpack val))
-  | False = Nothing
-  | True  = Just (Get (cast val))
-parseCommand "quit" "" = Just Quit
-parseCommand _      _  = Nothing
+parseCommand "add"    str   = Just (Add str)
+parseCommand "get"    val   = if   all isDigit (unpack val)
+                              then Just $ Get (cast val)
+                              else Nothing
+parseCommand "search" query = Just (Search query)
+parseCommand "quit"   ""    = Just Quit
+parseCommand _        _     = Nothing
 
 ||| Attempt to parse a string as a command.
 ||| @ input a string to attempt to parse.
@@ -68,15 +72,26 @@ getEntry id store with (integerToFin id (size store))
   | Nothing = Just ("Out of range\n", store)
   | Just i  = Just (index i (items store) ++ "\n", store)
 
+doSearch : (query : String)
+         -> (item : String) -> (matches : List String)
+         -> List String
+doSearch query item = if query `isInfixOf` toLower item then (::) item else id
+
+search : (query : String) -> (store : DataStore) -> REPLResponse
+search query store with (foldr (doSearch (toLower query)) [] (items store))
+  | []      = Just ("Not found\n", store)
+  | matches = Just (unwords matches ++ "\n", store)
+
 ||| Process user input from the REPL.
 ||| @ store a data store
 ||| @ input a user-entered string, possibly representing a valid command.
 processInput : (store : DataStore) -> (input : String) -> REPLResponse
 processInput store input with (parse input)
-  | Nothing         = Just ("Invalid command\n", store)
-  | Just (Add item) = addItem  item store
-  | Just (Get id)   = getEntry id   store
-  | Just Quit       = Nothing
+  | Nothing             = Just ("Invalid command\n", store)
+  | Just (Add    item)  = addItem  item store
+  | Just (Get    id)    = getEntry id   store
+  | Just (Search query) = search   query store
+  | Just Quit           = Nothing
 
 ||| Run a REPL, processing commands and maintaing a data store.
 partial
