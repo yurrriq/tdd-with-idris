@@ -24,7 +24,7 @@ REPLResponse = Maybe (String, DataStore)
 ||| @ store the store to add to.
 ||| @ item  the item to add.
 addToStore : (store : DataStore) -> (item : String) -> DataStore
-addToStore (Data _ items) item = Data _ (item :: items)
+addToStore (Data _ items) item = Data _ (items ++ [item])
 
 ||| An data store command.
 data Command = ||| Add an item.
