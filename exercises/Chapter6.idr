@@ -7,6 +7,7 @@ import Data.Vect
 
 -- Exercise 6.2.3.1
 
+||| An `n` by `m` matrix.
 Matrix : (n, m : Nat) -> Type
 Matrix n m = Vect n (Vect m Double)
 
@@ -23,16 +24,16 @@ data Format = Number     Format
 PrintfType : Format -> Type
 PrintfType (Number  fmt) = (i : Int)    -> PrintfType fmt
 PrintfType (Dbl     fmt) = (i : Double) -> PrintfType fmt
-PrintfType (Chr     fmt) = (c : Char) -> PrintfType fmt
+PrintfType (Chr     fmt) = (c : Char)   -> PrintfType fmt
 PrintfType (Str     fmt) = (s : String) -> PrintfType fmt
 PrintfType (Lit str fmt) = PrintfType fmt
 PrintfType  End          = String
 
 printfFmt : (fmt : Format) -> (acc : String) -> PrintfType fmt
-printfFmt (Number  fmt) acc = \d => printfFmt fmt (acc ++ show d)
-printfFmt (Dbl     fmt) acc = \i => printfFmt fmt (acc ++ show i)
-printfFmt (Chr     fmt) acc = \c => printfFmt fmt (acc ++ strCons c "")
-printfFmt (Str     fmt) acc = \s => printfFmt fmt (acc ++ s)
+printfFmt (Number  fmt) acc = printfFmt fmt . (acc ++) . show
+printfFmt (Dbl     fmt) acc = printfFmt fmt . (acc ++) . show
+printfFmt (Chr     fmt) acc = printfFmt fmt . (acc ++) . flip strCons ""
+printfFmt (Str     fmt) acc = printfFmt fmt . (acc ++)
 printfFmt (Lit lit fmt) acc = printfFmt fmt (acc ++ lit)
 printfFmt  End          acc = acc
 
