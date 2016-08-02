@@ -13,15 +13,18 @@ import Data.Vect
 
 infixr 5 .+.
 
-data Schema = ||| A schema containing a single String.
+data Schema = ||| A schema containing a single character.
+              SChar
+            | ||| A schema containing a single string.
               SString
-            | ||| A schema containing a single Int.
+            | ||| A schema containing a single integer.
               SInt
             | ||| A schema combining two smaller schemas.
               (.+.) Schema Schema
 
 ||| Convert a schema to a concrete type.
 SchemaType : Schema -> Type
+SchemaType SChar     = Char
 SchemaType SString   = String
 SchemaType SInt      = Int
 SchemaType (x .+. y) = (SchemaType x, SchemaType y)
@@ -72,6 +75,11 @@ data Command : Schema -> Type where
    Quit      : Command schema
 
 parsePrefix : (schema : Schema) -> String -> Maybe (SchemaType schema, String)
+parsePrefix SChar input with (unpack input)
+  | ('\'' :: xs) with (span (/= '\'') xs)
+    | ([char], '\'' :: rest) = Just (char, ltrim (pack rest))
+    | _ = Nothing
+  | _ = Nothing
 parsePrefix SString input with (unpack input)
   | ('"' :: xs) with (span (/= '"') xs)
     | (quoted, '"' :: rest) = Just (pack quoted, ltrim (pack rest))
@@ -92,14 +100,12 @@ parseBySchema schema input with (parsePrefix schema input)
   | Nothing        = Nothing
 
 parseSchema : List String -> Maybe Schema
-parseSchema ("String" :: xs) =
-  case xs of
-    [] => pure  SString
-    _  => pure (SString .+.) <*> parseSchema xs
-parseSchema ("Int" :: xs) =
-  case xs of
-   [] => pure SInt
-   _  => pure (SInt .+.) <*> parseSchema xs
+parseSchema ("Char"   :: []) = Just  SChar
+parseSchema ("Char"   :: xs) = Just (SChar .+.) <*> parseSchema xs
+parseSchema ("String" :: []) = Just  SString
+parseSchema ("String" :: xs) = Just (SString .+.) <*> parseSchema xs
+parseSchema ("Int"    :: []) = Just  SInt
+parseSchema ("Int"    :: xs) = Just (SInt    .+.) <*> parseSchema xs
 parseSchema _ = Nothing
 
 ||| Parse a command from the interactive prompt.
@@ -112,7 +118,7 @@ parseCommand schema "add"    str   = pure Add <*> parseBySchema schema str
 parseCommand schema "get"    val   = if   all isDigit (unpack val)
                                      then Just $ Get (cast val)
                                      else Nothing
--- parseCommand schema "search" ""    = Nothing
+parseCommand schema "search" ""    = Nothing
 parseCommand schema "search" query = Just (Search query)
 parseCommand schema "quit"   _     = Just Quit
 parseCommand schema "schema" rest  = pure SetSchema <*> parseSchema (words rest)
@@ -126,6 +132,7 @@ parse schema input with (span (/= ' ') input)
   | (cmd, args) = parseCommand schema cmd (ltrim args)
 
 display : SchemaType schema -> String
+display {schema = SChar}      item  = show item
 display {schema = SString}    item  = show item
 display {schema = SInt}       item  = show item
 display {schema = (x .+. y)} (a, b) = display a ++ ", " ++ display b
@@ -133,7 +140,9 @@ display {schema = (x .+. y)} (a, b) = display a ++ ", " ++ display b
 ||| Add an item to a data store and return a REPL response.
 ||| @ item  an item to add.
 ||| @ store a store to add to.
-addItem : (store : DataStore) -> (item : SchemaType (schema store)) -> REPLResponse
+addItem :  (store : DataStore)
+        -> (item : SchemaType (schema store))
+        -> REPLResponse
 addItem store item =
   Just ("ID " ++ show (size store) ++ "\n", addToStore store item)
 
@@ -144,6 +153,21 @@ getEntry : (id : Integer) -> (store : DataStore) -> REPLResponse
 getEntry id store with (integerToFin id (size store))
   | Nothing = Just ("Out of range\n", store)
   | Just i  = Just (display (index i (items store)) ++ "\n", store)
+
+
+-- Exercise 6.3.8.2
+
+||| Pretty print all entries in a data store and return a REPL response.
+||| @ store a data store whose entries to pretty print
+getAllEntries : (store : DataStore) -> REPLResponse
+getAllEntries store@(Data _ Z []) = Just ("No entries\n", store)
+getAllEntries store              = go [] (items store)
+  where
+    go :  (acc : Vect n String)
+       -> (items : Vect m (SchemaType (schema store)))
+       -> REPLResponse
+    go     acc []      = Just (unlines (toList (reverse acc)) ++ "\n", store)
+    go {n} acc (x::xs) = go ((show n ++ " => " ++ display x) :: acc) xs
 
 doSearch :  (query : String)
          -> (store : Vect n (SchemaType schema))
@@ -173,6 +197,8 @@ setSchema _                _      = Nothing
 ||| @ store a data store
 ||| @ input a user-entered string, possibly representing a valid command.
 processInput : (store : DataStore) -> (input : String) -> REPLResponse
+-- FIXME: This is smelly, but gets the job done.
+processInput store "get"     = getAllEntries store
 processInput store input with (parse (schema store) input)
   | Nothing                  = Just ("Invalid command\n", store)
   | Just (Add       item)    = addItem  store item
