@@ -1,6 +1,6 @@
 = Chapter 2 Exercises
 
-> module Chapter2
+> module Exercises.Chapter2
 >
 > import Data.Vect
 >
@@ -87,10 +87,6 @@ Rename `x` to `word` and fill in the right hand side.
 >       charCount = length str
 >   in  (wordCount, charCount)
 
-> ||| `"Hello, Idris world!"` has three words and 19 characters.
-> testCounts : counts "Hello, Idris world!" = (3, 19)
-> testCounts = Refl
-
 
 == 7
 
@@ -108,9 +104,6 @@ Rename `x` to `word` and fill in the right hand side.
 > over_length len = foldr go 0
 >   where go : String -> Nat -> Nat
 >         go x count = if length x > len then S count else count
-
-> test_over_length : over_length 3 ["One", "Two", "Three", "Four"] = 2
-> test_over_length = Refl
 
 
 == 9

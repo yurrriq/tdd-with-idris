@@ -1,7 +1,7 @@
 ```idris
 module Chapter2Main
 
-import Chapter2
+import Exercises.Chapter2
 
 %access public export
 

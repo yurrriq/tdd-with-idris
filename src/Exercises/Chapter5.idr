@@ -1,4 +1,4 @@
-module Chapter5
+module Exercises.Chapter5
 
 import Data.Vect
 

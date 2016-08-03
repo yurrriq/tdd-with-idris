@@ -2,7 +2,7 @@ Chapter 3
 =========
 
 ```idris
-module Chapter3
+module Exercises.Chapter3
 ```
 
 Import `Data.Vect`, because we'll need it later.
@@ -280,23 +280,6 @@ addMatrix : Num numType =>
             Vect rows (Vect cols numType)
 addMatrix []          ys          = ys
 addMatrix (xs :: xxs) (ys :: yys) = zipWith (+) xs ys :: addMatrix xxs yys
-```
-
-A few tests.
-
-```idris
-testAddMatrix : [ [ 1,  2]
-                , [ 3,  4]
-                , [ 5,  6] ]
-                `addMatrix`
-                [ [ 7,  8]
-                , [ 9, 10]
-                , [11, 12] ]
-                =
-                [ [ 8, 10]
-                , [12, 14]
-                , [16, 18] ]
-testAddMatrix = Refl
 ```
 
 ### 3. `multMatrix`

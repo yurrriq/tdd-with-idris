@@ -1,4 +1,4 @@
-module Chapter6
+module Exercises.Chapter6
 
 import Data.Vect
 
@@ -57,6 +57,3 @@ printf fmt = printfFmt _ ""
 TupleVect : (k : Nat) -> (a : Type) -> Type
 TupleVect  Z    a = ()
 TupleVect (S k) a = (a, TupleVect k a)
-
-test : TupleVect 4 Nat
-test = (1,2,3,4,())

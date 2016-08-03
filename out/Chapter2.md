@@ -2,7 +2,7 @@ Chapter 2 Exercises
 ===================
 
 ```idris
-module Chapter2
+module Exercises.Chapter2
 
 import Data.Vect
 
@@ -98,12 +98,6 @@ counts str =
   in  (wordCount, charCount)
 ```
 
-```idris
-||| `"Hello, Idris world!"` has three words and 19 characters.
-testCounts : counts "Hello, Idris world!" = (3, 19)
-testCounts = Refl
-```
-
 7
 -
 
@@ -124,11 +118,6 @@ over_length : (len : Nat) -> List String -> Nat
 over_length len = foldr go 0
   where go : String -> Nat -> Nat
         go x count = if length x > len then S count else count
-```
-
-```idris
-test_over_length : over_length 3 ["One", "Two", "Three", "Four"] = 2
-test_over_length = Refl
 ```
 
 9

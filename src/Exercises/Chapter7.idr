@@ -1,6 +1,6 @@
-module Chapter7
+module Exercises.Chapter7
 
-import Chapter4 -- For Shape
+import Exercises.Chapter4 -- For Shape
 
 %access public export
 
@@ -77,3 +77,21 @@ Show num => Show (Expr num) where
 
 (Integral num, Neg num) => Cast (Expr num) num where
   cast = eval
+
+
+-- Exercise 7.3.4.1
+
+Functor Expr where
+  map f (Val x)   = Val (f x)
+  map f (Add x y) = Add (map f x) (map f y)
+  map f (Sub x y) = Sub (map f x) (map f y)
+  map f (Mul x y) = Mul (map f x) (map f y)
+  map f (Div x y) = Div (map f x) (map f y)
+  map f (Abs x)   = Abs (map f x)
+
+
+-- Exercise 7.3.4.2
+
+data Vect : Nat -> Type -> Type where
+  Nil  : Vect 0 a
+  (::) : (x : a) -> (xs : Vect k a) -> Vect (S k) a

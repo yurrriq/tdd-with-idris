@@ -1,4 +1,4 @@
-SRC       ?= src
+SRC       ?= src/Exercises
 BIN       ?= bin
 OUT       ?= out
 LIDR_SRCS := $(notdir $(wildcard $(SRC)/*.lidr))
@@ -9,7 +9,9 @@ PANDOC     = pandoc -f markdown+lhs -t markdown_github
 SED_HACK   = sed 's/ sourceCode/idris/'
 CLEAN      = rm -f
 
-all: compile markdown
+# all: compile markdown
+
+all: markdown
 
 clean-all: clean clean-out
 
@@ -17,12 +19,12 @@ clean: ; $(CLEAN) $(BINS) $(IBCS)
 
 clean-out: ; $(CLEAN) $(MDS)
 
-compile: $(BINS)
+# compile: $(BINS)
 
 markdown: $(MDS)
 
-grip: markdown; @grip $(MDS)
+# grip: markdown; @grip $(MDS)
 
-out/%.md: src/%.lidr; $(PANDOC) $< | $(SED_HACK) > $@
+$(OUT)/%.md: $(SRC)/%.lidr; $(PANDOC) $< | $(SED_HACK) > $@
 
-bin/%: src/%.lidr; idris $< -o $@
+# $(BIN)/%: $(SRC)/%Main.lidr; idris -i src --check -o $@ $<

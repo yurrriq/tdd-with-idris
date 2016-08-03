@@ -1,4 +1,4 @@
-module Chapter4
+module Exercises.Chapter4
 
 import Data.Vect
 
@@ -47,9 +47,6 @@ treeToList : BSTree a -> List a
 treeToList Empty                 = []
 treeToList (Node left val right) = treeToList left ++ [val] ++ treeToList right
 
-testOneTwo : [1..9] = treeToList (listToTree [4,1,8,7,2,3,9,5,6])
-testOneTwo = Refl
-
 
 -- Exercise 4.1.5.3
 
@@ -80,15 +77,6 @@ evaluate (lhs * rhs) = evaluate lhs * evaluate rhs
 ||| Return the larger of two inputs, or `Nothing` if both inputs are `Nothing`.
 maxMaybe : Ord a => Maybe a -> Maybe a -> Maybe a
 maxMaybe mx my = (max <$> mx <*> my) <|> mx <|> my
-
-testMaxMaybe1 : Just 5 = maxMaybe (Just 4) (Just 5)
-testMaxMaybe1 = Refl
-
-testMaxMaybe2 : Just 4 = maxMaybe (Just 4) Nothing
-testMaxMaybe2 = Refl
-
-testMaxMaybe3 : Just 5 = maxMaybe Nothing (Just 5)
-testMaxMaybe3 = Refl
 
 
 -- Exercise 4.1.5.6
@@ -136,24 +124,6 @@ biggestTriangle (Combine pic pic1)  = maxMaybe (biggestTriangle pic)
                                                (biggestTriangle pic1)
 biggestTriangle (Rotate _ pic)      = biggestTriangle pic
 biggestTriangle (Translate _ _ pic) = biggestTriangle pic
-
-rectangle : Picture
-rectangle = Primitive (Rectangle 20 10)
-
-circle : Picture
-circle = Primitive (Circle 5)
-
-triangle : Picture
-triangle = Primitive (Triangle 10 10)
-
-test_picture : Picture
-test_picture = Combine (Translate 5 5 rectangle)
-               (Combine (Translate 35 5 circle)
-               (Translate 15 25 triangle))
-
-testBiggestTriangle1 :
-  biggestTriangle Chapter4.test_picture = Just $ picture_area Chapter4.triangle
-testBiggestTriangle1 = Refl
 
 
 --- Exercise 4.2.4.1-2
@@ -208,9 +178,3 @@ sumEntries {n} pos xs ys with (integerToFin pos n)
 -- sumEntries {n} pos xs ys = case integerToFin pos n of
 --                           Nothing  => Nothing
 --                           Just pos => Just $ index pos xs + index pos ys
-
-testSumEntries1 : Just 10 = sumEntries 2 [1,2,3,4] [5,6,7,8]
-testSumEntries1 = Refl
-
-testsumEntries2 : Nothing = sumEntries 4 [1,2,3,4] [5,6,7,8]
-testsumEntries2 = Refl

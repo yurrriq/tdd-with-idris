@@ -44,12 +44,14 @@ main = time >>= pure . flip mod 100 >>= flip guess 0 . cast
 
 -- Exercise 5.2.4.4
 
+{-
 syntax "(,)" = MkPair
 
 infixl 8 .:
 
 (.:) : (c -> d) -> (a -> b -> c) -> a -> b -> d
 (.:) = (.) . (.)
+-}
 
 namespace DIY
   replWith : a -> String -> (a -> String -> Maybe (String, a)) -> IO ()
