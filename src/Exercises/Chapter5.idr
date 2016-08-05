@@ -3,6 +3,7 @@ module Exercises.Chapter5
 import Data.Vect
 
 %access  public export
+%default partial
 
 
 -- Exercise 5.3.5.1
@@ -19,9 +20,11 @@ readToBlank = go []
 
 -- Exercise 5.3.5.2
 
+total
 printErrorAndClose : (err : FileError) -> (file : File) -> IO ()
 printErrorAndClose err file = printLn err *> closeFile file
 
+total
 appendLine : (file : File) -> (line : String) -> IO ()
 appendLine file line = do
   Right () <- fPutStrLn file line | Left err => printErrorAndClose err file
@@ -45,6 +48,7 @@ readAndSave = do
 
 -- Exercise 5.3.5.3
 
+total
 empty : (Z ** Vect Z String)
 empty = (_ ** [])
 

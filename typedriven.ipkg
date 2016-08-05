@@ -3,6 +3,7 @@ package typedriven
 modules    = -- Exercise modules
              Exercises.Chapter2, {- Exercises.Chapter3, -} Exercises.Chapter4
            , Exercises.Chapter5, Exercises.Chapter6, Exercises.Chapter7
+           , Exercises.Chapter8
 
              -- Test modules
            , Test, Test.Chapter2, {- Test.Chapter3, -} Test.Chapter4
@@ -36,4 +37,4 @@ sourceloc  = https://github.com/yurrriq/learning-idris
 bugtracker = https://github.com/yurrriq/learning-idris/issues
 
 sourcedir = src
--- opts      = "--total"
+opts      = "--total"

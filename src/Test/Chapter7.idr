@@ -5,6 +5,7 @@ import Exercises.Chapter7
 
 %access public export
 
+partial
 testFunctorExpr1 : IO ()
 testFunctorExpr1 =
  assertEq (map (*2) (the (Expr _) (1 + 2 * 3)))
