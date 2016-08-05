@@ -92,6 +92,17 @@ Functor Expr where
 
 -- Exercise 7.3.4.2
 
-data Vect : Nat -> Type -> Type where
-  Nil  : Vect 0 a
-  (::) : (x : a) -> (xs : Vect k a) -> Vect (S k) a
+namespace MyVect
+  data Vect : Nat -> Type -> Type where
+    Nil  : Vect 0 a
+    (::) : (x : a) -> (xs : Vect k a) -> Vect (S k) a
+
+  Eq a => Eq (Vect n a) where
+    (==) []      []      = True
+    (==) (x::xs) (y::ys) = (x == y) && (xs == ys)
+
+  Foldable (Vect n) where
+    foldl _ z []      = z
+    foldl f z (x::xs) = foldl f (f z x) xs
+    foldr _ z []      = z
+    foldr f z (x::xs) = f x $ foldr f z xs
