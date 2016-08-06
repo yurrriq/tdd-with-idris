@@ -3,7 +3,7 @@ package typedriven
 modules    = -- Exercise modules
              Exercises.Chapter2, {- Exercises.Chapter3, -} Exercises.Chapter4
            , Exercises.Chapter5, Exercises.Chapter6, Exercises.Chapter7
-           , Exercises.Chapter8
+           , Exercises.Chapter8, Exercises.Chapter9
 
              -- Test modules
            , Test, Test.Chapter2, {- Test.Chapter3, -} Test.Chapter4
