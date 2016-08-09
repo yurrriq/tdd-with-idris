@@ -22,9 +22,6 @@ namespace List
   notLastNil LastOne      impossible
   notLastNil (LastCons _) impossible
 
-  -- trick : (prf : Last xs value) -> Last (x :: xs) value
-  -- trick prf = LastCons prf
-
   notTha1 :(contra : Not (value = x)) -> Not (Last [x] value)
   notTha1 contra LastOne        = contra Refl
   notTha1 contra (LastCons nil) = notLastNil nil
@@ -37,13 +34,9 @@ namespace List
 
   isLast : DecEq a => (xs : List a) -> (value : a) -> Dec (Last xs value)
   isLast [] value = No notLastNil
-  -- isLast [x]       value with (decEq value x)
-  --   | Yes prf   = rewrite prf in Yes LastOne
-  --   | No contra = No (notTha1 contra)
   isLast (x :: xs) value with (isLast xs value)
-    | Yes prf   = Yes (LastCons prf)
+    | Yes prf = Yes (LastCons prf)
     | No contra with (decEq xs [])
-      -- | Yes prf = rewrite prf in assert_total (isLast [x] value)
       | Yes prf with (decEq value x)
         | Yes yep = rewrite prf in rewrite yep in Yes LastOne
         | No nope = rewrite prf in No (notTha1 nope)
