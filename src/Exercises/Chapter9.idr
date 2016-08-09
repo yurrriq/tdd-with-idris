@@ -22,22 +22,20 @@ namespace List
   notLastNil LastOne      impossible
   notLastNil (LastCons _) impossible
 
-  notTha1 :(contra : Not (value = x)) -> Not (Last [x] value)
-  notTha1 contra LastOne        = contra Refl
-  notTha1 contra (LastCons nil) = notLastNil nil
+  notTha1 : Not (x = value) -> Not (Last [x] value)
+  notTha1 contra  LastOne       = contra Refl
+  notTha1 _      (LastCons nil) = notLastNil nil
 
-  noWay :  (jose : Not (xs = []))
-        -> (contra : Not (Last xs value))
-        -> Not (Last (x :: xs) value)
-  noWay jose contra LastOne        = void (jose Refl)
-  noWay jose contra (LastCons prf) = contra prf
+  noWay : Not (xs = []) -> Not (Last xs value) -> Not (Last (x :: xs) value)
+  noWay contra _       LastOne       = absurd (contra Refl)
+  noWay _      contra (LastCons prf) = contra prf
 
   isLast : DecEq a => (xs : List a) -> (value : a) -> Dec (Last xs value)
-  isLast [] value = No notLastNil
+  isLast [] _ = No notLastNil
   isLast (x :: xs) value with (isLast xs value)
     | Yes prf = Yes (LastCons prf)
-    | No contra with (decEq xs [])
-      | Yes prf with (decEq value x)
-        | Yes yep = rewrite prf in rewrite yep in Yes LastOne
-        | No nope = rewrite prf in No (notTha1 nope)
-      | No jose = No (noWay jose contra)
+    | No callate with (decEq xs [])
+      isLast (x::_) value | _ | Yes Refl with (decEq x value)
+        isLast [_] _ | _ | _ | Yes Refl = Yes LastOne
+        | No sucka = No (notTha1 sucka)
+      | No jose = No (noWay jose callate)
