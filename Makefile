@@ -28,3 +28,9 @@ markdown: $(MDS)
 $(OUT)/%.md: $(SRC)/%.lidr; $(PANDOC) $< | $(SED_HACK) > $@
 
 # $(BIN)/%: $(SRC)/%Main.lidr; idris -i src --check -o $@ $<
+
+build: ; idris --build typedriven.ipkg
+
+test: ; idris --testpkg typedriven.ipkg
+
+doc: ; idris --mkdoc typedriven.ipkg
