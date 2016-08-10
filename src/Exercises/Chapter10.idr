@@ -5,6 +5,9 @@
 -- --------------------------------------------------------------------- [ EOH ]
 module Exercises.Chapter10
 
+import Data.List.Views
+import Data.Vect
+import Data.Vect.Views
 import Test
 
 %access  export
@@ -42,11 +45,36 @@ halves xs with (takeN (length xs `div` 2) xs)
   halves xs | Fewer = ([],xs)
   halves (n_xs ++ rest) | (Exact n_xs) {rest} = (n_xs,rest)
 
+---------------------------------------------------------- [ Exercise 10.2.5.1 ]
+
+equalSuffix : Eq a => (xs, ys : List a) -> List a
+equalSuffix = go []
+  where
+    go : List a -> List a -> List a -> List a
+    go acc xs ys with (snocList xs)
+      go acc [] _ | Empty = acc
+      go acc (xs' ++ [x]) ys | (Snoc recX) with (snocList ys)
+        go acc (_ ++ [_]) [] | (Snoc _) | Empty = acc
+        go acc (xs' ++ [x]) (ys' ++ [y]) | (Snoc recX) | (Snoc recY) =
+          let acc' = if x == y then x :: acc else acc in
+          go acc' xs' ys' | recX | recY
+
+---------------------------------------------------------- [ Exercise 10.2.5.2 ]
+
+merge_sort : Ord a => Vect n a -> Vect n a
+merge_sort xs with (splitRec xs)
+  merge_sort []                | SplitRecNil = []
+  merge_sort [x]               | SplitRecOne = [x]
+  merge_sort (lefts ++ rights) | (SplitRecPair lrec rrec) =
+    merge (merge_sort lefts  | lrec)
+          (merge_sort rights | rrec)
+
 ---------------------------------------------------------------------- [ Tests ]
 
 -- partial
 testGroupByN : IO ()
-testGroupByN = assertEq [[1,2,3],[4,5,6],[7,8,9],[10]] $ groupByN 3 [1..10]
+testGroupByN = assertEq [[1,2,3],[4,5,6],[7,8,9],[10]] $
+                        the (List (List Integer)) (groupByN 3 [1..10])
 
 partial
 testHalves10 : IO ()
@@ -54,6 +82,23 @@ testHalves10 = assertEq ([1..5], [6..10]) $ halves [1..10]
 
 partial
 testHalves1 : IO ()
-testHalves1 = assertEq ([], [1]) $ halves [1]
+testHalves1 = assertEq ([], [1]) $ the (List Integer, List Integer) (halves [1])
+
+testEqualSuffix1 : IO ()
+testEqualSuffix1 = assertEq (the (List Integer) [4,5])
+                            (equalSuffix [1,2,4,5] [1..5])
+
+testEqualSuffix2 : IO ()
+testEqualSuffix2 = assertEq [] $ equalSuffix [1,2,4,5,6] [1..5]
+
+testEqualSuffix3 : IO ()
+testEqualSuffix3 = assertEq (the (List Integer) [4,5,6])
+                            (equalSuffix [1,2,4,5,6] [1..6])
+
+test_merge_sort1 : IO ()
+test_merge_sort1 = assertEq (fromList [1,2,3]) (merge_sort [3,2,1])
+
+test_merge_sort2 : IO ()
+test_merge_sort2 = assertEq (fromList [1..9]) (merge_sort [5,1,4,3,2,6,8,7,9])
 
 ------------------------------------------------------------------------ [ EOF ]
