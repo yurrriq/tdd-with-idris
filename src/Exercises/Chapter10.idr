@@ -6,6 +6,7 @@
 module Exercises.Chapter10
 
 import Data.List.Views
+import Data.Nat.Views
 import Data.Vect
 import Data.Vect.Views
 import Test
@@ -47,6 +48,7 @@ halves xs with (takeN (length xs `div` 2) xs)
 
 ---------------------------------------------------------- [ Exercise 10.2.5.1 ]
 
+-- FIXME: I'm broken.
 equalSuffix : Eq a => (xs, ys : List a) -> List a
 equalSuffix = go []
   where
@@ -68,6 +70,15 @@ merge_sort xs with (splitRec xs)
   merge_sort (lefts ++ rights) | (SplitRecPair lrec rrec) =
     merge (merge_sort lefts  | lrec)
           (merge_sort rights | rrec)
+
+---------------------------------------------------------- [ Exercise 10.2.5.3 ]
+
+-- FIXME: This is a ineffecient due the the string appending.
+toBinary : (n : Nat) -> String
+toBinary n with (halfRec n)
+  toBinary  Z          |  HalfRecZ         = ""
+  toBinary (x + x)     | (HalfRecEven rec) = (toBinary x | rec) ++ "0"
+  toBinary (S (x + x)) | (HalfRecOdd  rec) = (toBinary x | rec) ++ "1"
 
 ---------------------------------------------------------------------- [ Tests ]
 
@@ -100,5 +111,16 @@ test_merge_sort1 = assertEq (fromList [1,2,3]) (merge_sort [3,2,1])
 
 test_merge_sort2 : IO ()
 test_merge_sort2 = assertEq (fromList [1..9]) (merge_sort [5,1,4,3,2,6,8,7,9])
+
+testToBinary42 : IO ()
+testToBinary42 = assertEq "101010" $ toBinary 42
+
+testToBinary94 : IO ()
+testToBinary94 = assertEq "1011110" $ toBinary 94
+
+testToBinaryExercism : IO ()
+testToBinaryExercism =
+  assertEq (the (List String) ["1", "10", "11", "100", "1001", "11010"])
+           (map toBinary [1,2,3,4,9,26])
 
 ------------------------------------------------------------------------ [ EOF ]
