@@ -73,7 +73,7 @@ merge_sort xs with (splitRec xs)
 
 ---------------------------------------------------------- [ Exercise 10.2.5.3 ]
 
--- FIXME: This is a ineffecient due the the string appending.
+-- FIXME: This is ineffecient due to the string appending, at least.
 toBinary : (n : Nat) -> String
 toBinary n with (halfRec n)
   toBinary  Z          |  HalfRecZ         = ""
