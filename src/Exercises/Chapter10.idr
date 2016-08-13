@@ -48,18 +48,29 @@ halves xs with (takeN (length xs `div` 2) xs)
 
 ---------------------------------------------------------- [ Exercise 10.2.5.1 ]
 
--- FIXME: I'm broken.
-equalSuffix : Eq a => (xs, ys : List a) -> List a
-equalSuffix = go []
-  where
-    go : List a -> List a -> List a -> List a
-    go acc xs ys with (snocList xs)
-      go acc [] _ | Empty = acc
-      go acc (xs' ++ [x]) ys | (Snoc recX) with (snocList ys)
-        go acc (_ ++ [_]) [] | (Snoc _) | Empty = acc
-        go acc (xs' ++ [x]) (ys' ++ [y]) | (Snoc recX) | (Snoc recY) =
-          let acc' = if x == y then x :: acc else acc in
-          go acc' xs' ys' | recX | recY
+{- NOTE: Here's isSuffix for reference. It's quite similar to equalSuffix.
+isSuffix : Eq a => List a -> List a -> Bool
+isSuffix input1 input2 with (snocList input1)
+  isSuffix [] input2 | Empty = True
+  isSuffix (xs ++ [x]) input2 | (Snoc rec) with (snocList input2)
+    isSuffix (xs ++ [x]) [] | (Snoc rec) | Empty = False
+    isSuffix (xs ++ [x]) (ys ++ [y]) | (Snoc xsrec) | (Snoc ysrec) =
+      x == y && isSuffix xs ys | xsrec | ysrec
+-}
+
+-- FIXME: I don't love this. It would be great to accumulate a SnocList then
+-- convert it to a list at the end, though maybe that's no different from
+-- accumulating a singly linked list and then reversing it.
+equalSuffixHelp : Eq a => (acc, input1, input2 : List a) -> List a
+equalSuffixHelp acc input1 input2 with (snocList input1)
+  equalSuffixHelp acc [] input2 | Empty = []
+  equalSuffixHelp acc (xs ++ [x]) input2 | (Snoc xsrec) with (snocList input2)
+    equalSuffixHelp acc (xs ++ [x]) [] | (Snoc xsrec) | Empty = []
+    equalSuffixHelp acc (xs ++ [x]) (ys ++ [y]) | (Snoc xsrec) | (Snoc ysrec) =
+      if x /= y then [] else x :: equalSuffixHelp acc xs ys | xsrec | ysrec
+
+equalSuffix : Eq a => (input1, input2 : List a) -> List a
+equalSuffix input1 input2 = reverse $ equalSuffixHelp [] input1 input2
 
 ---------------------------------------------------------- [ Exercise 10.2.5.2 ]
 
