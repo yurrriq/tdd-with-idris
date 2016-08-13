@@ -80,6 +80,14 @@ toBinary n with (halfRec n)
   toBinary (x + x)     | (HalfRecEven rec) = (toBinary x | rec) ++ "0"
   toBinary (S (x + x)) | (HalfRecOdd  rec) = (toBinary x | rec) ++ "1"
 
+---------------------------------------------------------- [ Exercise 10.2.5.4 ]
+
+palindrome : Eq a => (xs : List a) -> Bool
+palindrome xs with (vList xs)
+  palindrome []  | VNil = True
+  palindrome [x] | VOne = True
+  palindrome (x :: (ys ++ [y])) | (VCons rec) = x == y && palindrome ys | rec
+
 ---------------------------------------------------------------------- [ Tests ]
 
 -- partial
@@ -122,5 +130,14 @@ testToBinaryExercism : IO ()
 testToBinaryExercism =
   assertEq (the (List String) ["1", "10", "11", "100", "1001", "11010"])
            (map toBinary [1,2,3,4,9,26])
+
+testPalindrome1 : IO ()
+testPalindrome1 = assertEq True $ palindrome (unpack "abccba")
+
+testPalindrome2 : IO ()
+testPalindrome2 = assertEq True $ palindrome (unpack "abcba")
+
+testPalindrome3 : IO ()
+testPalindrome3 = assertEq False $ palindrome (unpack "abcb")
 
 ------------------------------------------------------------------------ [ EOF ]
