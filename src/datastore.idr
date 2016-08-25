@@ -7,12 +7,12 @@ import Data.Morphisms
 import Data.Vect
 
 %default total
-%access  public export
 
--- 6.3.1
+------------------------------------------- [ Exercise 6.3.1 // Revised 10.3.2 ]
 
 infixr 5 .+.
 
+public export
 data Schema = ||| A schema containing a single character.
               SChar
             | ||| A schema containing a single string.
@@ -23,6 +23,7 @@ data Schema = ||| A schema containing a single character.
               (.+.) Schema Schema
 
 ||| Convert a schema to a concrete type.
+public export
 SchemaType : Schema -> Type
 SchemaType SChar     = Char
 SchemaType SString   = String
@@ -30,10 +31,9 @@ SchemaType SInt      = Int
 SchemaType (x .+. y) = (SchemaType x, SchemaType y)
 
 ||| A sized data store for strings, referable by numeric identifier.
-record DataStore where
-  constructor Data
-  ||| The schema of the store.
-  schema : Schema               -- 6.3.2
+export
+record DataStore (schema : Schema) where
+  constructor MkData
   ||| The number or stored items.
   size   : Nat                  -- N.B. This covers Exercise 4.3.5.1.
   ||| The contents of the store.
@@ -41,21 +41,47 @@ record DataStore where
 
 %name DataStore store
 
-||| A REPL response, i.e. possibly a pair of reponse to print and data store.
-REPLResponse : Type
-REPLResponse = Maybe (String, DataStore)
+export
+empty : DataStore schema
+empty = MkData 0 []
 
 ||| Add an item to a data store.
-||| @ store the store to add to.
 ||| @ item  the item to add.
-addToStore : (store : DataStore)
-           -> (item : SchemaType (schema store))
-           -> DataStore
-addToStore (Data schema _ store) newitem = Data schema _ (addToData store)
-  where
-    addToData : Vect k (SchemaType schema) -> Vect (S k) (SchemaType schema)
-    addToData []              = [newitem]
-    addToData (item :: items) = item :: addToData items
+||| @ store the store to add to.
+export
+addToStore : (item  : SchemaType schema)
+          -> (store : DataStore schema)
+          -> DataStore schema
+addToStore item (MkData _ items) = MkData _ (item :: items)
+
+--------------------------------------------------------------------- [ 10.3.3 ]
+
+public export
+data StoreView : DataStore schema -> Type where
+          SNil : StoreView empty
+          SAdd : (rec : StoreView store) -> StoreView (addToStore value store)
+
+storeViewHelp : (items : Vect size (SchemaType schema))
+             -> StoreView (MkData size items)
+storeViewHelp []          = SNil
+storeViewHelp (val :: xs) = SAdd (storeViewHelp xs)
+
+export
+storeView : (store : DataStore schema) -> StoreView store
+storeView (MkData size items) = storeViewHelp items
+
+export
+filterKeys : (test  : SchemaType schema -> Bool)
+          -> (store : DataStore (SString .+. schema))
+          -> List String
+filterKeys test store with (storeView store)
+  filterKeys test                          store  | SNil     = []
+  filterKeys test (addToStore (key, value) store) | SAdd rec =
+    if test value
+       then key :: filterKeys test store | rec
+       else        filterKeys test store | rec
+
+--------------------------------------------------------------------------------
 
 ||| An data store command.
 data Command : Schema -> Type where
@@ -112,12 +138,12 @@ parseSchema _ = Nothing
 ||| @ cmd  a string to attempt to parse as a command.
 ||| @ args arguments to pass to a parsed command.
 parseCommand : (schema : Schema)
-             -> (cmd, args : String)
-             -> Maybe (Command schema)
+            -> (cmd, args : String)
+            -> Maybe (Command schema)
 parseCommand schema "add"    str   = pure Add <*> parseBySchema schema str
-parseCommand schema "get"    val   = if   all isDigit (unpack val)
-                                     then Just $ Get (cast val)
-                                     else Nothing
+parseCommand schema "get"    val   = if all isDigit (unpack val)
+                                        then Just $ Get (cast val)
+                                        else Nothing
 parseCommand schema "search" ""    = Nothing
 parseCommand schema "search" query = Just (Search query)
 parseCommand schema "quit"   _     = Just Quit
@@ -140,76 +166,78 @@ display {schema = (x .+. y)} (a, b) = display a ++ ", " ++ display b
 ||| Add an item to a data store and return a REPL response.
 ||| @ item  an item to add.
 ||| @ store a store to add to.
-addItem :  (store : DataStore)
-        -> (item : SchemaType (schema store))
-        -> REPLResponse
-addItem store item =
-  Just ("ID " ++ show (size store) ++ "\n", addToStore store item)
+addItem : (item : SchemaType schema)
+       -> (store : DataStore schema)
+       -> Maybe (String, DataStore schema)
+addItem item store =
+  Just ("ID " ++ show (size store) ++ "\n", addToStore item store)
 
 ||| Get an entry from a data store by ID and return a REPL response.
 ||| @ id    an ID to look up.
 ||| @ store a store possibly containing a matching entry.
-getEntry : (id : Integer) -> (store : DataStore) -> REPLResponse
+getEntry : (id : Integer) -> (store : DataStore schema) -> Maybe (String, DataStore schema)
 getEntry id store with (integerToFin id (size store))
   | Nothing = Just ("Out of range\n", store)
   | Just i  = Just (display (index i (items store)) ++ "\n", store)
 
+----------------------------------------------------------- [ Exercise 6.3.8.2 ]
 
--- Exercise 6.3.8.2
+showItems : DataStore schema -> List (SchemaType schema)
+showItems input with (storeView input)
+  showItems empty                   | SNil       = []
+  showItems (addToStore item store) | (SAdd rec) = item :: showItems store | rec
 
 ||| Pretty print all entries in a data store and return a REPL response.
 ||| @ store a data store whose entries to pretty print
-getAllEntries : (store : DataStore) -> REPLResponse
-getAllEntries store@(Data _ Z []) = Just ("No entries\n", store)
-getAllEntries store              = go [] (items store)
+getAllEntries : (store : DataStore schema) -> Maybe (String, DataStore schema)
+getAllEntries store@(MkData Z []) = Just ("No entries\n", store)
+getAllEntries store               = Just (unlines (reverse (go 0 (showItems store))), store)
   where
-    go :  (acc : Vect n String)
-       -> (items : Vect m (SchemaType (schema store)))
-       -> REPLResponse
-    go     acc []      = Just (unlines (toList (reverse acc)) ++ "\n", store)
-    go {n} acc (x::xs) = go ((show n ++ " => " ++ display x) :: acc) xs
+    go : Nat -> List (SchemaType schema) -> List String
+    go _ []      = []
+    go n (x::xs) = (show n ++ " => " ++ display x) :: (go (S n) xs)
 
-doSearch :  (query : String)
-         -> (store : Vect n (SchemaType schema))
-         -> List (Nat, String)
+doSearch : (query : String)
+        -> (store : Vect n (SchemaType schema))
+        -> List (Nat, String)
 doSearch query [] = []
 doSearch query (item :: items) =
   let matches = pure go <*> doSearch query items
       itemStr = display item in
-      if query `isInfixOf` toLower itemStr then
-        (0,itemStr) :: matches
-      else
-        matches
-      where
-        go = applyMor $ first (arrow S)
+      if query `isInfixOf` toLower itemStr
+         then (0,itemStr) :: matches
+         else matches
+  where
+    go = applyMor $ first (arrow S)
 
-search : (query : String) -> (store : DataStore) -> REPLResponse
+search : (query : String) -> (store : DataStore schema) -> Maybe (String, DataStore schema)
 search query store with (doSearch query (items store))
   | []      = Just ("Not found\n", store)
   | matches = Just (unwords (map format matches) ++ "\n", store)
       where format (k,x) = "(" ++ show k ++ ", " ++ x ++ ")"
 
-setSchema : (store : DataStore) -> (schema : Schema) -> Maybe DataStore
-setSchema (Data _ Z items) schema = Just (Data schema _ [])
-setSchema _                _      = Nothing
+setSchema : (schema' : Schema) -> (store : DataStore schema) -> Maybe (DataStore schema')
+setSchema schema' (MkData Z items) = Just (MkData _ [])
+setSchema _       _                = Nothing
 
 ||| Process user input from the REPL.
 ||| @ store a data store
 ||| @ input a user-entered string, possibly representing a valid command.
-processInput : (store : DataStore) -> (input : String) -> REPLResponse
+partial
+processInput : (store : DataStore schema) -> (input : String) -> Maybe (String, DataStore schema)
 -- FIXME: This is smelly, but gets the job done.
 processInput store "get"     = getAllEntries store
-processInput store input with (parse (schema store) input)
+processInput {schema} store input with (parse schema input)
   | Nothing                  = Just ("Invalid command\n", store)
-  | Just (Add       item)    = addItem  store item
+  | Just (Add       item)    = addItem  item  store
   | Just (Get       id)      = getEntry id    store
   | Just (Search    query)   = search   (toLower query) store
-  | Just (SetSchema schema') =
-      (pure (MkPair "OK\n") <*> setSchema store schema') <|>
-       pure ("Can't update schema\n", store)
+  -- | Just (SetSchema schema') =
+  --     (pure (MkPair "OK\n") <*> setSchema schema' store) <|>
+  --      pure ("Can't update schema\n", store)
   | Just Quit                = Nothing
 
 ||| Run a REPL, processing commands and maintaing a data store.
 partial
 main : IO ()
-main = replWith (Data (SString .+. SString .+. SInt) _ []) "> " processInput
+main = replWith (the (DataStore (SString .+. SString .+. SInt)) empty) "> " processInput
