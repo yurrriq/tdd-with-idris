@@ -1,5 +1,5 @@
 ||| An interactive data store.
-module Main
+module DataStore
 
 import Control.Arrow
 import Control.Category
@@ -184,8 +184,8 @@ getEntry id store with (integerToFin id (size store))
 
 showItems : DataStore schema -> List (SchemaType schema)
 showItems input with (storeView input)
-  showItems empty                   | SNil       = []
-  showItems (addToStore item store) | (SAdd rec) = item :: showItems store | rec
+  showItems empty                   | SNil     = []
+  showItems (addToStore item store) | SAdd rec = item :: showItems store | rec
 
 ||| Pretty print all entries in a data store and return a REPL response.
 ||| @ store a data store whose entries to pretty print
@@ -196,6 +196,16 @@ getAllEntries store               = Just (unlines (reverse (go 0 (showItems stor
     go : Nat -> List (SchemaType schema) -> List String
     go _ []      = []
     go n (x::xs) = (show n ++ " => " ++ display x) :: (go (S n) xs)
+
+------------------------------------------------------------ [ Exercise 10.3.4 ]
+
+export
+getValues : DataStore (SString .+. schema) -> List (SchemaType schema)
+getValues input with (storeView input)
+  getValues empty                      | SNil     = []
+  getValues (addToStore (_,val) store) | SAdd rec = val :: getValues store | rec
+
+--------------------------------------------------------------------------------
 
 doSearch : (query : String)
         -> (store : Vect n (SchemaType schema))
