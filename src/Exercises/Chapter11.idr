@@ -94,6 +94,66 @@ squareRoot : (number : Double) -> Double
 squareRoot number = squareRootBound 100 number 0.00000000001
                       (squareRootApprox number number)
 
+-- ------------------------------------------------------------------- [ InfIO ]
+
+data InfIO : Type where
+     Do    : IO a -> (a -> Inf InfIO) -> InfIO
+
+(>>=) : IO a -> (a -> Inf InfIO) -> InfIO
+(>>=) = Do
+
+data Fuel = Dry | More (Lazy Fuel)
+
+tank : Nat -> Fuel
+tank  Z    = Dry
+tank (S k) = More (tank k)
+
+partial
+forever : Fuel
+forever = More forever
+
+run : Fuel -> InfIO -> IO ()
+run  Dry         _       = putStrLn "Out of fuel"
+run (More fuel) (Do c f) = do res <- c
+                              run fuel (f res)
+
+-- --------------------------------------------------------- [ Exercise 11.2.7 ]
+
+totalREPL : (prompt : String) -> (action : String -> String) -> InfIO
+totalREPL prompt action = do putStr prompt
+                             input <- getLine
+                             putStr (action input)
+                             totalREPL prompt action
+
+-- ------------------------------------------------------- [ Exercise 11.3.4.1 ]
+
+private
+arithInputs : (seed : Int) -> Stream Int
+arithInputs seed = map bound (randoms seed)
+  where
+    bound : Int -> Int
+    bound num with (divides num 12)
+      bound ((12 * _div) + rem) | (DivBy _prf) = rem + 1
+
+partial
+quiz : IO ()
+quiz = go (arithInputs 12345) 0 0
+  where
+    partial
+    go : Stream Int -> (score, attempted : Nat) -> IO ()
+    go (num1 :: num2 :: nums) score attempted = do
+      putStrLn ("Score so far: " ++ show score ++ " / " ++ show attempted)
+      putStr (show num1 ++ " * " ++ show num2 ++ "? ")
+      guess <- getLine
+      if "quit" == guess
+        then putStrLn ("Final score: " ++ show score ++ " / " ++ show attempted)
+        else do let answer = num1 * num2
+                if cast guess == answer
+                  then do putStrLn "Correct!"
+                          go nums (score + 1) (attempted + 1)
+                  else do putStrLn ("Wrong, the answer is " ++ show answer)
+                          go nums score (attempted + 1)
+
 -- ------------------------------------------------------------------- [ Tests ]
 
 testEveryOther : IO ()
