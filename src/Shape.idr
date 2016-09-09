@@ -25,9 +25,9 @@ circle = Circle
 
 public export
 data ShapeView  : (shape : Shape) -> Type where
-     STriangle  : ShapeView shape
-     SRectangle : ShapeView shape
-     SCircle    : ShapeView shape
+     STriangle  : ShapeView (triangle base height)
+     SRectangle : ShapeView (rectangle width height)
+     SCircle    : ShapeView (circle radius)
 
 shapeView : (shape : Shape) -> ShapeView shape
 shapeView (Triangle  _ _) = STriangle
@@ -36,8 +36,8 @@ shapeView (Circle    _)   = SCircle
 
 area : (shape : Shape) -> Double
 area shape with (shapeView shape)
-  area (Triangle  base  height) | STriangle  = 0.5 * base * height
-  area (Rectangle width height) | SRectangle = width * height
-  area (Circle    radius)       | SCircle    = pi * pow radius 2
+  area (triangle  base  height) | STriangle  = 0.5 * base * height
+  area (rectangle width height) | SRectangle = width * height
+  area (circle    radius)       | SCircle    = pi * pow radius 2
 
 ------------------------------------------------------------------------ [ EOF ]
