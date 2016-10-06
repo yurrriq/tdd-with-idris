@@ -80,7 +80,7 @@ tail_unequal contra = void . contra . cong {f = tail}
 -- Exercise 8.3.4.2
 
 namespace MyVect
-  DecEq a => DecEq (Vect n a) where
+  implementation DecEq a => DecEq (Vect n a) where
     decEq [] [] = Yes Refl
     decEq (x :: xs) (y :: ys) with (decEq x y)
       | Yes same_head with (decEq xs ys)
