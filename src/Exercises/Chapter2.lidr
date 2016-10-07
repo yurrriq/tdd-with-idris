@@ -40,7 +40,7 @@ Rename `x` to `word` and fill in the right hand side.
 
 
 > ||| Determine whether a string reads the same backwards as forwards.
-> ||| @ str a string analyze.
+> ||| @ str a string to analyze.
 > palindrome : (str : String) -> Bool
 > palindrome str = str == reverse str
 
@@ -48,7 +48,7 @@ Rename `x` to `word` and fill in the right hand side.
 == 3
 
 > ||| Like `palindrome`, but case insensitive.
-> ||| @ str a string analyze.
+> ||| @ str a string to analyze.
 > caseInsensitivePalindrome : (str : String) -> Bool
 > caseInsensitivePalindrome = palindrome . toLower
 
@@ -57,7 +57,7 @@ Rename `x` to `word` and fill in the right hand side.
 
 > ||| Like `caseInsensitivePalindrome`, but return `True`
 > ||| iff `str` is longer than 10 characters.
-> ||| @ str a string analyze.
+> ||| @ str a string to analyze.
 > caseInsensitivePalindrome' : (str : String) -> Bool
 > caseInsensitivePalindrome' str =
 >   length str > 10 && caseInsensitivePalindrome str
@@ -71,7 +71,7 @@ Rename `x` to `word` and fill in the right hand side.
 > ||| `caseInsensitivePalindrome'` can be thought to be defined as
 > ||| `ciPalindromeWithLowerBound 10`
 > ||| @ lb the lower bound (exclusive) for string length.
-> ||| @ str a string analyze.
+> ||| @ str a string to analyze.
 > ciPalindromeWithLowerBound : (lb : Nat) -> (str : String) -> Bool
 > ciPalindromeWithLowerBound lb str =
 >   length str > lb && caseInsensitivePalindrome str
