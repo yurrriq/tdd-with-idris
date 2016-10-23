@@ -137,6 +137,10 @@ data Command  : Type -> Type where
      Pure     : ty -> Command ty
      Bind     : Command a -> (a -> Command b) -> Command b
 
+-- ------------------------------------------------------- [ Exercise 11.3.4.2 ]
+     ReadFile  : (filepath : String) -> Command (Either FileError String)
+     WriteFile : (filepath, contents : String) -> Command (Either FileError ())
+
 namespace CommandDo
   (>>=) : Command a -> (a -> Command b) -> Command b
   (>>=) = Bind
@@ -147,6 +151,8 @@ runCommand (PutStrLn str) = putStrLn str
 runCommand  GetLine       = getLine
 runCommand (Pure val)     = pure val
 runCommand (Bind c f)     = runCommand c >>= runCommand . f
+runCommand (ReadFile  filepath)          = readFile filepath
+runCommand (WriteFile filepath contents) = writeFile filepath contents
 
 data ConsoleIO : Type -> Type where
      Quit      : a -> ConsoleIO a
