@@ -196,6 +196,14 @@ readInput prompt = do PutStr prompt
 
 -- ------------------------------------------------------- [ Exercise 11.3.4.1 ]
 
+record QuizState where
+  constructor MkQuizState
+  score, attempts : Nat
+
+implementation Show QuizState where
+  show (MkQuizState score attempts)
+    = show score ++ " / " ++ show attempts
+
 private
 arithInputs : (seed : Int) -> Stream Int
 arithInputs seed = map bound (randoms seed)
@@ -205,31 +213,29 @@ arithInputs seed = map bound (randoms seed)
       bound ((12 * div) + rem) | (DivBy prf) = abs rem + 1
 
 mutual
-  correct : Stream Int -> (score, attempts : Nat) -> ConsoleIO Double
-  correct nums score attempts
+  correct : Stream Int -> QuizState -> ConsoleIO QuizState
+  correct nums state
     = do PutStrLn "Correct!"
-         quiz nums (score + 1) attempts
+         quiz nums (record { score $= (+ 1) } state)
 
-  wrong : Stream Int -> Int -> (score, attempts : Nat) -> ConsoleIO Double
-  wrong nums answer score attempts
+  wrong : Stream Int -> Int -> QuizState -> ConsoleIO QuizState
+  wrong nums answer state
     = do PutStrLn $ "Wrong, the answer is: " ++ show answer
-         quiz nums score attempts
+         quiz nums state
 
--- ------------------------------------------------------- [ Exercise 11.3.4.1 ]
-
-  quiz : Stream Int -> (score, attempts : Nat) -> ConsoleIO Double
-  quiz (num1 :: num2 :: nums) score attempts
-    = do PutStrLn $ "Score so far: " ++ show score ++ " / " ++ show attempts
+  quiz : Stream Int -> QuizState -> ConsoleIO QuizState
+  quiz (num1 :: num2 :: nums) state
+    = do PutStrLn $ "Score so far: " ++ show state
          input <- readInput $ show num1 ++ " * " ++ show num2 ++ "? "
          case input of
               Answer answer =>
-                let attempts'     = attempts + 1
+                let newState = record { attempts $= (+ 1) } state
                     correctAnswer = num1 * num2 in
                 if answer == correctAnswer
-                   then correct nums score attempts'
-                   else wrong nums correctAnswer score attempts'
+                   then correct nums newState
+                   else wrong nums correctAnswer newState
               QuitCmd =>
-                Quit (100 * cast score / cast attempts)
+                Quit state
 
 -- ------------------------------------------------------- [ Exercise 11.3.4.3 ]
 
