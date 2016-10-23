@@ -217,6 +217,57 @@ mutual
               QuitCmd =>
                 Quit (100 * cast score / cast attempts)
 
+-- ------------------------------------------------------- [ Exercise 11.3.4.3 ]
+
+mutual
+  ||| Read the contents of a file and print it to stdout with a trailing
+  ||| newline. Print an error message if filename is not a normal file.
+  cat : (filename : String) -> ConsoleIO ()
+  cat filename
+    = do Right contents <- ReadFile filename
+           | Left err => do PutStrLn (show err)
+                            shell
+         PutStrLn contents
+         shell
+
+  ||| Read the contents of a source file and write it to a destination file.
+  ||| Print an error message if anything goes wrong.
+  ||| @ source a source filepath, must be a normal file
+  ||| @ destination a destination filepath, must be writable
+  copy : (source, destination : String) -> ConsoleIO ()
+  copy source destination
+    = do Right contents <- ReadFile source
+           | Left err => do PutStrLn (show err)
+                            shell
+         Right () <- WriteFile destination contents
+           | Left err => do PutStrLn (show err)
+                            shell
+         shell
+
+  ||| Print a warning about an invalid command.
+  ||| @ command a string that represents an invalid command
+  invalidCommand : (command : String) -> ConsoleIO ()
+  invalidCommand command
+    = do PutStrLn ("Invalid command: " ++ command)
+         shell
+
+  ||| Quit the shell.
+  exit : ConsoleIO ()
+  exit = Quit ()
+
+  ||| Run a limited, interactive shell.
+  ||| Supported commands:
+  |||   - cat [filename]
+  |||   - copy [source] [destination]
+  |||   - exit
+  shell : ConsoleIO ()
+  shell = do PutStr "> "
+             input <- GetLine
+             case words input of
+                  ["exit"] => exit
+                  ["cat", filepath] => cat filepath
+                  ["copy", source, destination] => copy source destination
+                  _ => invalidCommand input
 
 -- ------------------------------------------------------------------- [ Tests ]
 
