@@ -96,11 +96,12 @@ squareRoot number = squareRootBound 100 number 0.00000000001
 
 -- ------------------------------------------------------------------- [ InfIO ]
 
-data InfIO : Type where
-     Do    : IO a -> (a -> Inf InfIO) -> InfIO
+namespace InfIO
+  data InfIO : Type where
+       Do    : IO a -> (a -> Inf InfIO) -> InfIO
 
-(>>=) : IO a -> (a -> Inf InfIO) -> InfIO
-(>>=) = Do
+  (>>=) : IO a -> (a -> Inf InfIO) -> InfIO
+  (>>=) = Do
 
 data Fuel = Dry | More (Lazy Fuel)
 
@@ -120,10 +121,58 @@ run (More fuel) (Do c f) = do res <- c
 -- --------------------------------------------------------- [ Exercise 11.2.7 ]
 
 totalREPL : (prompt : String) -> (action : String -> String) -> InfIO
-totalREPL prompt action = do putStr prompt
-                             input <- getLine
-                             putStr (action input)
-                             totalREPL prompt action
+totalREPL prompt action
+  = do putStr prompt
+       input <- getLine
+       putStr (action input)
+       totalREPL prompt action
+
+-- ------------------------------------------ [ 11.3.2 Domain Specific Comands ]
+
+data Command  : Type -> Type where
+     PutStr   : String -> Command ()
+     PutStrLn : String -> Command ()
+     GetLine  : Command String
+
+     Pure     : ty -> Command ty
+     Bind     : Command a -> (a -> Command b) -> Command b
+
+namespace CommandDo
+  (>>=) : Command a -> (a -> Command b) -> Command b
+  (>>=) = Bind
+
+runCommand : Command a -> IO a
+runCommand (PutStr   str) = putStr str
+runCommand (PutStrLn str) = putStrLn str
+runCommand  GetLine       = getLine
+runCommand (Pure val)     = pure val
+runCommand (Bind c f)     = runCommand c >>= runCommand . f
+
+data ConsoleIO : Type -> Type where
+     Quit      : a -> ConsoleIO a
+     Do        : Command a -> (a -> Inf (ConsoleIO b)) -> ConsoleIO b
+
+namespace ConsoleDo
+  (>>=) : Command a -> (a -> Inf (ConsoleIO b)) -> ConsoleIO b
+  (>>=) = Do
+
+  run : Fuel -> ConsoleIO a -> IO (Maybe a)
+  run       fuel  (Quit val) = do pure (Just val)
+  run (More fuel) (Do c f)   = do res <- runCommand c
+                                  run fuel (f res)
+  run  Dry         p         = pure Nothing
+
+-- ---------------------------------------------- [ 11.3.3 Sequencing Commands ]
+
+data Input = Answer Int
+           | QuitCmd
+
+readInput : (prompt : String) -> Command Input
+readInput prompt = do PutStr prompt
+                      answer <- GetLine
+                      if toLower answer == "quit"
+                         then Pure QuitCmd
+                         else Pure (Answer (cast answer))
 
 -- ------------------------------------------------------- [ Exercise 11.3.4.1 ]
 
@@ -133,26 +182,35 @@ arithInputs seed = map bound (randoms seed)
   where
     bound : Int -> Int
     bound num with (divides num 12)
-      bound ((12 * _div) + rem) | (DivBy _prf) = rem + 1
+      bound ((12 * div) + rem) | (DivBy prf) = abs rem + 1
 
-partial
-quiz : IO ()
-quiz = go (arithInputs 12345) 0 0
-  where
-    partial
-    go : Stream Int -> (score, attempted : Nat) -> IO ()
-    go (num1 :: num2 :: nums) score attempted = do
-      putStrLn ("Score so far: " ++ show score ++ " / " ++ show attempted)
-      putStr (show num1 ++ " * " ++ show num2 ++ "? ")
-      guess <- getLine
-      if "quit" == guess
-        then putStrLn ("Final score: " ++ show score ++ " / " ++ show attempted)
-        else do let answer = num1 * num2
-                if cast guess == answer
-                  then do putStrLn "Correct!"
-                          go nums (score + 1) (attempted + 1)
-                  else do putStrLn ("Wrong, the answer is " ++ show answer)
-                          go nums score (attempted + 1)
+mutual
+  correct : Stream Int -> (score, attempts : Nat) -> ConsoleIO Double
+  correct nums score attempts
+    = do PutStrLn "Correct!"
+         quiz nums (score + 1) attempts
+
+  wrong : Stream Int -> Int -> (score, attempts : Nat) -> ConsoleIO Double
+  wrong nums answer score attempts
+    = do PutStrLn $ "Wrong, the answer is: " ++ show answer
+         quiz nums score attempts
+
+-- ------------------------------------------------------- [ Exercise 11.3.4.1 ]
+
+  quiz : Stream Int -> (score, attempts : Nat) -> ConsoleIO Double
+  quiz (num1 :: num2 :: nums) score attempts
+    = do PutStrLn $ "Score so far: " ++ show score ++ " / " ++ show attempts
+         input <- readInput $ show num1 ++ " * " ++ show num2 ++ "? "
+         case input of
+              Answer answer =>
+                let attempts'     = attempts + 1
+                    correctAnswer = num1 * num2 in
+                if answer == correctAnswer
+                   then correct nums score attempts'
+                   else wrong nums correctAnswer score attempts'
+              QuitCmd =>
+                Quit (100 * cast score / cast attempts)
+
 
 -- ------------------------------------------------------------------- [ Tests ]
 
