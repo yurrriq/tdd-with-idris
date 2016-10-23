@@ -32,8 +32,8 @@ tests      = Test.Chapter2.testCounts, Test.Chapter2.test_over_length
            , Exercises.Chapter10.testEqualSuffix1
            , Exercises.Chapter10.testEqualSuffix2
            , Exercises.Chapter10.testEqualSuffix3
-           , Exercises.Chapter10.test_merge_sort1
-           , Exercises.Chapter10.test_merge_sort2
+           , Exercises.Chapter10.testMergeSort1
+           , Exercises.Chapter10.testMergeSort2
            , Exercises.Chapter10.testToBinary42
            , Exercises.Chapter10.testToBinary94
            , Exercises.Chapter10.testToBinaryExercism

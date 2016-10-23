@@ -74,13 +74,13 @@ equalSuffix input1 input2 = reverse $ equalSuffixHelp [] input1 input2
 
 ---------------------------------------------------------- [ Exercise 10.2.5.2 ]
 
-merge_sort : Ord a => Vect n a -> Vect n a
-merge_sort xs with (splitRec xs)
-  merge_sort []                | SplitRecNil = []
-  merge_sort [x]               | SplitRecOne = [x]
-  merge_sort (lefts ++ rights) | (SplitRecPair lrec rrec) =
-    merge (merge_sort lefts  | lrec)
-          (merge_sort rights | rrec)
+mergeSort : Ord a => Vect n a -> Vect n a
+mergeSort xs with (splitRec xs)
+  mergeSort []                | SplitRecNil = []
+  mergeSort [x]               | SplitRecOne = [x]
+  mergeSort (lefts ++ rights) | (SplitRecPair lrec rrec) =
+    merge (mergeSort lefts  | lrec)
+          (mergeSort rights | rrec)
 
 ---------------------------------------------------------- [ Exercise 10.2.5.3 ]
 
@@ -125,11 +125,11 @@ testEqualSuffix3 : IO ()
 testEqualSuffix3 = assertEq (the (List Integer) [4,5,6])
                             (equalSuffix [1,2,4,5,6] [1..6])
 
-test_merge_sort1 : IO ()
-test_merge_sort1 = assertEq (fromList [1,2,3]) (merge_sort [3,2,1])
+testMergeSort1 : IO ()
+testMergeSort1 = assertEq (fromList [1,2,3]) (mergeSort [3,2,1])
 
-test_merge_sort2 : IO ()
-test_merge_sort2 = assertEq (fromList [1..9]) (merge_sort [5,1,4,3,2,6,8,7,9])
+testMergeSort2 : IO ()
+testMergeSort2 = assertEq (fromList [1..9]) (mergeSort [5,1,4,3,2,6,8,7,9])
 
 testToBinary42 : IO ()
 testToBinary42 = assertEq "101010" $ toBinary 42
