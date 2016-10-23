@@ -168,6 +168,20 @@ namespace ConsoleDo
                                   run fuel (f res)
   run  Dry         p         = pure Nothing
 
+  run_ : Fuel -> ConsoleIO a -> IO ()
+  run_       fuel  (Quit val) = pure ()
+  run_ (More fuel) (Do c f)   = do res <- runCommand c
+                                   run_ fuel (f res)
+  run_  Dry         p         = pure ()
+
+  partial
+  runForever : ConsoleIO a -> IO (Maybe a)
+  runForever = run forever
+
+  partial
+  runForever_ : ConsoleIO a -> IO ()
+  runForever_ = run_ forever
+
 -- ---------------------------------------------- [ 11.3.3 Sequencing Commands ]
 
 data Input = Answer Int
