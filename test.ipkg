@@ -1,0 +1,22 @@
+package typedriven.test
+
+pkgs       = typdriven
+           , test
+
+modules    = Exercise.Test.State
+           , Test.Helpers
+
+tests      = Exercise.Test.State.runTest
+
+brief      = "Test for exercises in Type-Driven Development with Idris."
+version    = 0.1.0
+readme     = README.md
+-- license    = BSD-3
+author     = "Eric Bailey"
+
+homepage   = https://github.com/yurrriq/learning-idris
+sourceloc  = https://github.com/yurrriq/learning-idris
+bugtracker = https://github.com/yurrriq/learning-idris/issues
+
+sourcedir = src
+opts      = "--ibcsubdir ../_build"

@@ -6,48 +6,8 @@ modules    = -- Exercise modules
            , Exercises.Chapter8, Exercises.Chapter9, Exercises.Chapter10
            , Exercises.Chapter11
 
-             -- Test modules
-           , Test, Test.Chapter2, {- Test.Chapter3, -} Test.Chapter4
-           , Test.Chapter6, Test.Chapter7
-
              -- Interactive programs
            -- , datastore, guessnumber, longerstring
-
-tests      = Test.Chapter2.testCounts, Test.Chapter2.test_over_length
-             -- Chapter 3
-           -- , Test.Chapter3.testAddMatrix
-             -- Chapter 4
-           , Test.Chapter4.testOneTwo, Test.Chapter4.testMaxMaybe1
-           , Test.Chapter4.testMaxMaybe2, Test.Chapter4.testMaxMaybe3
-           , Test.Chapter4.testBiggestTriangle1, Test.Chapter4.testSumEntries1
-           , Test.Chapter4.testSumEntries2
-             -- Chapter 6
-           , Test.Chapter6.testTupleVect
-             -- Chapter 7
-           , Test.Chapter7.testFunctorExpr1
-           , Test.Chapter7.testFunctorExpr1
-             -- Chapter 10
-           , Exercises.Chapter10.testGroupByN
-           , Exercises.Chapter10.testHalves10, Exercises.Chapter10.testHalves1
-           , Exercises.Chapter10.testEqualSuffix1
-           , Exercises.Chapter10.testEqualSuffix2
-           , Exercises.Chapter10.testEqualSuffix3
-           , Exercises.Chapter10.testMergeSort1
-           , Exercises.Chapter10.testMergeSort2
-           , Exercises.Chapter10.testToBinary42
-           , Exercises.Chapter10.testToBinary94
-           , Exercises.Chapter10.testToBinaryExercism
-           , Exercises.Chapter10.testPalindrome1
-           , Exercises.Chapter10.testPalindrome2
-           , Exercises.Chapter10.testPalindrome3
-           , Exercises.Chapter11.testEveryOther
-           , Exercises.Chapter11.testInfListFunctor
-           , Exercises.Chapter11.testCoinFlips
-           , Exercises.Chapter11.testSquareRootApprox1
-           , Exercises.Chapter11.testSquareRootApprox2
-           , Exercises.Chapter11.testSquareRoot1
-           , Exercises.Chapter11.testSquareRoot2
-           , Exercises.Chapter11.testSquareRoot3
 
 brief      = "Solutions to exercises in Type-Driven Development with Idris."
 version    = 0.1.0
@@ -60,4 +20,4 @@ sourceloc  = https://github.com/yurrriq/learning-idris
 bugtracker = https://github.com/yurrriq/learning-idris/issues
 
 sourcedir = src
---        opts      = "--total"
+opts      = "--ibcsubdir ../_build"

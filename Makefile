@@ -32,6 +32,6 @@ $(OUT)/%.md: $(SRC)/%.lidr; $(PANDOC) $< | $(SED_HACK) > $@
 
 build: ; idris --build typedriven.ipkg
 
-test: ; idris --testpkg typedriven.ipkg
+test: ; nix-shell --command 'idris --testpkg test.ipkg'
 
 doc: ; idris --mkdoc typedriven.ipkg
