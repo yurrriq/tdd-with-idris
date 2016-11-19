@@ -13,7 +13,8 @@ CLEAN      = rm -f
 
 all: markdown
 
-clean-all: clean clean-out
+clobber: clean clean-out
+	rm -rf _build/
 
 clean: ; $(CLEAN) $(BINS) $(IBCS)
 
