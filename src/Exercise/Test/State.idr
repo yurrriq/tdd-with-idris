@@ -1,9 +1,14 @@
+-- --------------------------------------------------------------- [ State.idr ]
+-- Module      : Exercise.Test.State
+-- Description : Test covering the Chapter 12 exercises in Edwin Brady's
+--               book, "Type-Driven Development with Idris."
+-- --------------------------------------------------------------------- [ EOH ]
 module Exercise.Test.State
 
 import Exercise.State
+import Test.Helpers
 
 import Control.Monad.State
-import Test.Helpers
 
 %default total
 %access export
@@ -30,3 +35,5 @@ runTest = do putStrLn "Testing Chapter 12: State"
                       , testCountEmpty
                       , testCountEmptyNode
                       ]
+
+-- --------------------------------------------------------------------- [ EOF ]

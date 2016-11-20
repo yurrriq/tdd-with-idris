@@ -1,3 +1,8 @@
+-- --------------------------------------------------------------- [ State.idr ]
+-- Module      : Chapter.State
+-- Description : Definitions from Chapter 12 of Edwin Brady's book,
+--               "Type-Driven Development with Idris."
+-- --------------------------------------------------------------------- [ EOH ]
 module Chapter.State
 
 -- NOTE: See 12.1.3
