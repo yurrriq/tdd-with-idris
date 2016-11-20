@@ -8,6 +8,9 @@ module Chapter.State
 -- NOTE: See 12.1.3
 import public Control.Monad.State
 
+-- NOTE: See 12.3.6
+import Data.Primitives.Views
+
 %default total
 
 -- ----------------------------------------- [ 12.1 Working with Mutable State ]
@@ -85,5 +88,183 @@ namespace Stateful
   export
   treeLabel : Tree a -> Tree (Integer, a)
   treeLabel tree = evalState (treeLabelWith tree) [1..]
+
+-- ----------------------------------------------------------- [ Listing 12.13 ]
+
+export
+addIfPositive : Integer -> State Integer Bool
+addIfPositive val = do let positive = val > 0
+                       when positive $ update (+ val)
+                       pure positive
+  where
+    update = (get >>=) . (put .)
+
+export
+addPositives : List Integer -> State Integer Nat
+addPositives vals = do added <- traverse addIfPositive vals
+                       pure (length (filter id added))
+
+-- ---------------------------------------------------- [ 12.3.2 Complex State ]
+
+public export
+record Score where
+       constructor MkScore
+       correct, attempted : Nat
+
+public export
+record GameState where
+       constructor MkGameState
+       score : Score
+       difficulty : Int
+
+public export
+implementation Show GameState where
+  show st = show (record { score->correct } st) ++ " / " ++
+            show (record { score->attempted } st) ++ "\n" ++
+            "Difficulty: " ++ show (difficulty st)
+
+export
+initState : GameState
+initState = MkGameState (MkScore 0 0) 12
+
+-- ------------------------------------- [ 12.3.1 The Arithmetic Quiz Revisted ]
+
+public export
+data Command : Type -> Type where
+     PutStr : String -> Command ()
+     GetLine : Command String
+
+     GetRandom : Command Int
+
+     GetGameState : Command GameState
+
+     PutGameState : GameState -> Command ()
+
+     Pure : ty -> Command ty
+     Bind : Command a -> (a -> Command b) -> Command b
+
+public export
+data ConsoleIO : Type -> Type where
+     Quit : a -> ConsoleIO a
+     Do : Command a -> (a -> Inf (ConsoleIO b)) -> ConsoleIO b
+
+namespace CommandDo
+
+  public export
+  (>>=) : Command a -> (a -> Command b) -> Command b
+  (>>=) = Bind
+
+namespace ConsoleDo
+
+  public export
+  (>>=) : Command a -> (a -> Inf (ConsoleIO b)) -> ConsoleIO b
+  (>>=) =  Do
+
+public export
+data Fuel = Dry | More (Lazy Fuel)
+
+public export
+partial
+forever : Fuel
+forever = More forever
+
+-- ----------------------------------------------- [ 12.3.6 Executing the Quiz ]
+
+export
+runCommand : Stream Int ->
+             GameState ->
+             Command a ->
+             IO (a, Stream Int, GameState)
+runCommand rnds state (PutStr x) = do putStr x
+                                      pure ((), rnds, state)
+runCommand rnds state GetLine    = do str <- getLine
+                                      pure (str, rnds, state)
+
+runCommand (val :: rnds) state GetRandom =
+  pure (getRandom val (difficulty state), rnds, state)
+  where
+    getRandom : Int -> Int -> Int
+    getRandom val max with (divides val max)
+      getRandom val 0             | DivByZero = 1
+      getRandom ((_ * _) + rem) _ | DivBy prf = abs rem + 1
+
+runCommand rnds state GetGameState            = pure (state, rnds, state)
+runCommand rnds state (PutGameState newState) = pure ((), rnds, newState)
+
+runCommand rnds state (Pure val) = pure (val, rnds, state)
+runCommand rnds state (Bind c f) =
+  do (res, newRnds, newState) <- runCommand rnds state c
+     runCommand newRnds newState (f res)
+
+export
+run : Fuel -> Stream Int -> GameState -> ConsoleIO a ->
+      IO (Maybe a, Stream Int, GameState)
+run fuel rnds state (Quit val) = do pure (Just val, rnds, state)
+run (More fuel) rnds state (Do cmd f) =
+  do (res, newRnds, newState) <- runCommand rnds state cmd
+     run fuel newRnds newState (f res)
+run Dry rnds state _ = pure (Nothing, rnds, state)
+
+-- ------------------------------------- [ 12.3.3 Updating Record Field Values ]
+
+export
+setDifficulty : Int -> GameState -> GameState
+setDifficulty newDiff = record { difficulty = newDiff}
+
+export
+addWrong : GameState -> GameState
+addWrong = record { score->attempted $= (+1) }
+
+export
+addCorrect : GameState -> GameState
+addCorrect = record { score->correct   $= (+1)
+                    , score->attempted $= (+1)
+                    }
+
+-- -------------------------------------------- [ 12.3.5 Implementing the Quiz ]
+
+-- Copied from 11.3.3
+public export
+data Input = Answer Int
+           | QuitCmd
+
+mutual
+  export
+  correct : ConsoleIO GameState
+  correct = do PutStr "Correct!\n"
+               st <- GetGameState
+               PutGameState (addCorrect st)
+               quiz
+  export
+  wrong : Int -> ConsoleIO GameState
+  wrong ans = do PutStr $ "Wrong, the answer is " ++ show ans ++ "\n"
+                 st <- GetGameState
+                 PutGameState (addWrong st)
+                 quiz
+  export
+  readInput : (prompt : String) -> Command Input
+  readInput prompt = do PutStr prompt
+                        answer <- GetLine
+                        if toLower answer == "quit"
+                           then Pure QuitCmd
+                           else Pure (Answer (cast answer))
+  export
+  quiz : ConsoleIO GameState
+  quiz = do x <- GetRandom
+            y <- GetRandom
+            st <- GetGameState
+            PutStr $ show st ++ "\n"
+            let solution = x * y
+            QuitCmd <- readInput $ show x ++ " * " ++ show y ++ "? "
+              | Answer solution => correct
+              | Answer _        => wrong solution
+            Quit st
+
+-- ----------------------------------------------------------- [ Listing 12.32 ]
+
+export
+randoms : Int -> Stream Int
+randoms seed = let seed' = 1664525 * seed + 1013904223 in
+                   (seed' `shiftR` 2) :: randoms seed'
 
 -- --------------------------------------------------------------------- [ EOF ]

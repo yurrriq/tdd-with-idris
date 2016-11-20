@@ -40,4 +40,50 @@ countEmptyNode (Node left _ right) = countEmptyNode left  *>
                                      countEmptyNode right *>
                                      update (second S)
 
+-- -------------------------------------------------------- [ 12.3.7 Exercises ]
+
+export
+updateGameState : (GameState -> GameState) -> Command ()
+updateGameState f = GetGameState >>= PutGameState . f
+
+public export
+implementation Functor Command where
+  map f x = Bind x (Pure . f)
+
+public export
+implementation Applicative Command where
+  pure = Pure
+  f <*> m = Bind f $ (Bind m) . (Pure .)
+
+public export
+implementation Monad Command where
+  (>>=) = Bind
+
+public export
+record Votes where
+  constructor MkVotes
+  upvotes, downvotes : Integer
+
+public export
+record Article where
+  constructor MkArticle
+  title, url : String
+  score : Votes
+
+export
+initPage : (title, url : String) -> Article
+initPage title url = MkArticle title url (MkVotes 0 0)
+
+export
+getScore : Article -> Integer
+getScore = (\(MkVotes up down) => up - down) . score
+
+export
+addUpvote : Article -> Article
+addUpvote = record { score->upvotes $= (+1) }
+
+export
+addDownvote : Article -> Article
+addDownvote = record { score->downvotes $= (+1) }
+
 -- --------------------------------------------------------------------- [ EOF ]

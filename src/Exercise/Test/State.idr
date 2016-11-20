@@ -9,6 +9,7 @@ import Exercise.State
 import Test.Helpers
 
 import Control.Monad.State
+import System
 
 %default total
 %access export
@@ -28,12 +29,46 @@ testCountEmptyNode =
   "countEmptyNode" `assertEqual` (7, 6) $
   execState (countEmptyNode testTree) (0, 0)
 
+testUpdateGameState : IO ()
+testUpdateGameState =
+  do let command = updateGameState addCorrect
+     rnds <- pure (randoms . fromInteger) <*> time
+     (_, _, st) <- runCommand rnds initState command
+     "updateGameState" `assertEqual` 1 $
+       record { score->correct } st
+
+goodSite : Article
+goodSite = MkArticle "Good Page" "http://example.com/good" (MkVotes 101 7)
+
+badSite : Article
+badSite = MkArticle "Bad Page" "http://example.com/bad" (MkVotes 5 47)
+
+testGetScore : (article : Article) -> (expected : Integer) -> IO ()
+testGetScore article expected =
+  ("getScore " ++ title article) `assertEqual` expected $
+  getScore article
+
+testAddUpvote : IO ()
+testAddUpvote =
+  "addUpvote" `assertEqual` 102 $
+  record { score->upvotes } $ addUpvote goodSite
+
+testAddDownvote : IO ()
+testAddDownvote =
+  "addDownvote" `assertEqual` 48 $
+  record { score->downvotes } $ addDownvote badSite
+
 runTest : IO ()
 runTest = do putStrLn "Testing Chapter 12: State"
              putStrLn infoLine
              runTests [ testIncrease
                       , testCountEmpty
                       , testCountEmptyNode
+                      , testUpdateGameState
+                      , testGetScore goodSite 94
+                      , testGetScore badSite (-42)
+                      , testAddUpvote
+                      , testAddDownvote
                       ]
 
 -- --------------------------------------------------------------------- [ EOF ]
