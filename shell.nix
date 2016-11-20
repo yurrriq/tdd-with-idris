@@ -1,8 +1,8 @@
-with (import <nixpkgs> {});
-pkgs.stdenv.mkDerivation {
-  name = "tdd-with-idris-env-0";
-  buildInputs = with pkgs; [
-    gcc gmp libffi
-    haskellPackages.idris
-  ];
+let
+  pkgs = import <nixpkgs> {};
+  stdenv = pkgs.stdenv;
+in stdenv.mkDerivation {
+  name = "typedriven";
+  src = ./.;
+  buildInputs = with pkgs; [ haskellPackages.idris gcc gmp libffi ];
 }
