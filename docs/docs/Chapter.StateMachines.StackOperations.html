@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html><head><title>IdrisDoc: Chapter.StateMachines.StackOperations</title><link type="text/css" rel="stylesheet" href="../styles.css"></head><body class="namespace"><div class="wrapper"><header><strong>IdrisDoc</strong>: Chapter.StateMachines.StackOperations<nav><a href="../index.html">Index</a></nav></header><div class="container"><h1>Chapter.StateMachines.StackOperations</h1><dl class="decls"><dt id="Chapter.StateMachines.StackOperations.StackCmd"><span class="word">data&nbsp;</span><span class="name type" title="Chapter.StateMachines.StackOperations.StackCmd">StackCmd</span><span class="word">&nbsp;:&nbsp;</span><span class="signature">(<span class="boundvar" title="">ty</span> : <span class="type" title="Type">Type</span>) ->
+(<span class="boundvar" title="">a</span> : <span class="type" title="Type">Type</span>) ->
+(<span class="boundvar" title="">inHeight</span> : <a class="type" title="Prelude.Nat.Nat" href="Prelude.Nat.html#Prelude.Nat.Nat">Nat</a>) ->
+(<span class="boundvar" title="">outHeight</span> : <a class="type" title="Prelude.Nat.Nat" href="Prelude.Nat.html#Prelude.Nat.Nat">Nat</a>) ->
+<span class="type" title="Type">Type</span></span></dt><dd><dl class="decls"><dt id="Chapter.StateMachines.StackOperations.Push"><span class="name constructor" title="Chapter.StateMachines.StackOperations.Push">Push</span><span class="word">&nbsp;:&nbsp;</span><span class="signature"><span class="implicit boundvar" title="">a</span> ->
+<a class="type" title="Chapter.StateMachines.StackOperations.StackCmd" href="Chapter.StateMachines.StackOperations.html#Chapter.StateMachines.StackOperations.StackCmd">StackCmd</a> <a class="type" title="Unit" href="[builtins].html#Unit">()</a>
+<span class="implicit boundvar" title="">a</span>
+<span class="implicit boundvar" title="">height</span>
+(<a class="constructor" title="Prelude.Nat.S" href="Prelude.Nat.html#Prelude.Nat.S">S</a> <span class="implicit boundvar" title="">height</span>)</span></dt><dd></dd><dt id="Chapter.StateMachines.StackOperations.Pop"><span class="name constructor" title="Chapter.StateMachines.StackOperations.Pop">Pop</span><span class="word">&nbsp;:&nbsp;</span><span class="signature"><a class="type" title="Chapter.StateMachines.StackOperations.StackCmd" href="Chapter.StateMachines.StackOperations.html#Chapter.StateMachines.StackOperations.StackCmd">StackCmd</a> <span class="implicit boundvar" title="">a</span>
+<span class="implicit boundvar" title="">a</span>
+(<a class="constructor" title="Prelude.Nat.S" href="Prelude.Nat.html#Prelude.Nat.S">S</a> <span class="implicit boundvar" title="">height</span>)
+<span class="implicit boundvar" title="">height</span></span></dt><dd></dd><dt id="Chapter.StateMachines.StackOperations.Top"><span class="name constructor" title="Chapter.StateMachines.StackOperations.Top">Top</span><span class="word">&nbsp;:&nbsp;</span><span class="signature"><a class="type" title="Chapter.StateMachines.StackOperations.StackCmd" href="Chapter.StateMachines.StackOperations.html#Chapter.StateMachines.StackOperations.StackCmd">StackCmd</a> <span class="implicit boundvar" title="">a</span>
+<span class="implicit boundvar" title="">a</span>
+(<a class="constructor" title="Prelude.Nat.S" href="Prelude.Nat.html#Prelude.Nat.S">S</a> <span class="implicit boundvar" title="">height</span>)
+(<a class="constructor" title="Prelude.Nat.S" href="Prelude.Nat.html#Prelude.Nat.S">S</a> <span class="implicit boundvar" title="">height</span>)</span></dt><dd></dd><dt id="Chapter.StateMachines.StackOperations.GetStr"><span class="name constructor" title="Chapter.StateMachines.StackOperations.GetStr">GetStr</span><span class="word">&nbsp;:&nbsp;</span><span class="signature"><a class="type" title="Chapter.StateMachines.StackOperations.StackCmd" href="Chapter.StateMachines.StackOperations.html#Chapter.StateMachines.StackOperations.StackCmd">StackCmd</a> <span class="type" title="String">String</span>
+<span class="implicit boundvar" title="">a</span>
+<span class="implicit boundvar" title="">height</span>
+<span class="implicit boundvar" title="">height</span></span></dt><dd></dd><dt id="Chapter.StateMachines.StackOperations.PutStr"><span class="name constructor" title="Chapter.StateMachines.StackOperations.PutStr">PutStr</span><span class="word">&nbsp;:&nbsp;</span><span class="signature"><span class="type" title="String">String</span> ->
+<a class="type" title="Chapter.StateMachines.StackOperations.StackCmd" href="Chapter.StateMachines.StackOperations.html#Chapter.StateMachines.StackOperations.StackCmd">StackCmd</a> <a class="type" title="Unit" href="[builtins].html#Unit">()</a>
+<span class="implicit boundvar" title="">a</span>
+<span class="implicit boundvar" title="">height</span>
+<span class="implicit boundvar" title="">height</span></span></dt><dd></dd><dt id="Chapter.StateMachines.StackOperations.Pure"><span class="name constructor" title="Chapter.StateMachines.StackOperations.Pure">Pure</span><span class="word">&nbsp;:&nbsp;</span><span class="signature"><span class="implicit boundvar" title="">ty</span> ->
+<a class="type" title="Chapter.StateMachines.StackOperations.StackCmd" href="Chapter.StateMachines.StackOperations.html#Chapter.StateMachines.StackOperations.StackCmd">StackCmd</a> <span class="implicit boundvar" title="">ty</span>
+<span class="implicit boundvar" title="">a</span>
+<span class="implicit boundvar" title="">height</span>
+<span class="implicit boundvar" title="">height</span></span></dt><dd></dd><dt id="Chapter.StateMachines.StackOperations.&gt;&gt;="><span class="name constructor" title="Chapter.StateMachines.StackOperations.&gt;&gt;=">(&gt;&gt;=)</span><span class="word">&nbsp;:&nbsp;</span><span class="signature"><a class="type" title="Chapter.StateMachines.StackOperations.StackCmd" href="Chapter.StateMachines.StackOperations.html#Chapter.StateMachines.StackOperations.StackCmd">StackCmd</a> <span class="implicit boundvar" title="">a</span>
+<span class="implicit boundvar" title="">elem</span>
+<span class="implicit boundvar" title="">height1</span>
+<span class="implicit boundvar" title="">height2</span> ->
+(<span class="implicit boundvar" title="">a</span> ->
+<a class="type" title="Chapter.StateMachines.StackOperations.StackCmd" href="Chapter.StateMachines.StackOperations.html#Chapter.StateMachines.StackOperations.StackCmd">StackCmd</a> <span class="implicit boundvar" title="">b</span>
+<span class="implicit boundvar" title="">elem</span>
+<span class="implicit boundvar" title="">height2</span>
+<span class="implicit boundvar" title="">height3</span>) ->
+<a class="type" title="Chapter.StateMachines.StackOperations.StackCmd" href="Chapter.StateMachines.StackOperations.html#Chapter.StateMachines.StackOperations.StackCmd">StackCmd</a> <span class="implicit boundvar" title="">b</span>
+<span class="implicit boundvar" title="">elem</span>
+<span class="implicit boundvar" title="">height1</span>
+<span class="implicit boundvar" title="">height3</span></span></dt><dd><dl><dt class="fixity">Fixity</dt><dd class="fixity" title="infixl 5">Left associative, precedence 5</dd></dl></dd></dl></dd></dl></div></div><footer>Produced by IdrisDoc version 1.0</footer></body></html>

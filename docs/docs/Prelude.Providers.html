@@ -1,0 +1,10 @@
+<!DOCTYPE HTML>
+<html><head><title>IdrisDoc: Prelude.Providers</title><link type="text/css" rel="stylesheet" href="../styles.css"></head><body class="namespace"><div class="wrapper"><header><strong>IdrisDoc</strong>: Prelude.Providers<nav><a href="../index.html">Index</a></nav></header><div class="container"><h1>Prelude.Providers</h1><dl class="decls"><dt id="Prelude.Providers.Provider"><span class="word">data&nbsp;</span><span class="name type" title="Prelude.Providers.Provider">Provider</span><span class="word">&nbsp;:&nbsp;</span><span class="signature">(<span class="boundvar" title="">a</span> : <span class="type" title="Type">Type</span>) ->
+<span class="type" title="Type">Type</span></span></dt><dd><p>Type providers must build one of these in an IO computation.</p>
+<dl class="decls"><dt id="Prelude.Providers.Provide"><span class="name constructor" title="Prelude.Providers.Provide">Provide</span><span class="word">&nbsp;:&nbsp;</span><span class="signature">(<span class="documented boundvar" title="the term to be spliced (i.e. the proof)">x</span> : <span class="implicit boundvar" title="">a</span>) ->
+<a class="type" title="Prelude.Providers.Provider" href="Prelude.Providers.html#Prelude.Providers.Provider">Provider</a> <span class="implicit boundvar" title="">a</span></span></dt><dd><p>Return a term to be spliced in</p>
+<dl><dt>x</dt><dd><p>the term to be spliced (i.e. the proof)</p>
+</dd></dl></dd><dt id="Prelude.Providers.Error"><span class="name constructor" title="Prelude.Providers.Error">Error</span><span class="word">&nbsp;:&nbsp;</span><span class="signature">(<span class="documented boundvar" title="the error message">msg</span> : <span class="type" title="String">String</span>) ->
+<a class="type" title="Prelude.Providers.Provider" href="Prelude.Providers.html#Prelude.Providers.Provider">Provider</a> <span class="implicit boundvar" title="">a</span></span></dt><dd><p>Report an error to the user and stop compilation</p>
+<dl><dt>msg</dt><dd><p>the error message</p>
+</dd></dl></dd></dl></dd></dl></div></div><footer>Produced by IdrisDoc version 1.0</footer></body></html>
