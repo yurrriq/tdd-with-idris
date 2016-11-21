@@ -3,7 +3,7 @@ package typedriven.test
 pkgs       = typedriven
            , test
 
-opts       = "--total --ibcsubdir ../_build"
+opts       = "--total"
 sourcedir  = src
 
 modules    = Exercises.Test.State

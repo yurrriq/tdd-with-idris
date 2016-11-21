@@ -6,7 +6,7 @@ and tests thereof.
 #+BEGIN_SRC idris-ipkg :tangle typedriven.ipkg
 package typedriven
 
-opts       = "--total --ibcsubdir ../_build"
+opts       = "--total"
 sourcedir  = src
 
 modules    = Exercises.GettingStarted
@@ -18,9 +18,9 @@ readme     = README.org
 license    = MIT
 author     = "Eric Bailey"
 
-homepage   = https://github.com/yurrriq/learning-idris
-sourceloc  = https://github.com/yurrriq/learning-idris
-bugtracker = https://github.com/yurrriq/learning-idris/issues
+homepage   = https://github.com/yurrriq/tdd-with-idris
+sourceloc  = https://github.com/yurrriq/tdd-with-idris
+bugtracker = https://github.com/yurrriq/tdd-with-idris/issues
 #+END_SRC
 ** Test package
 #+BEGIN_SRC idris-ipkg :tangle test.ipkg
@@ -29,7 +29,7 @@ package typedriven.test
 pkgs       = typedriven
            , test
 
-opts       = "--total --ibcsubdir ../_build"
+opts       = "--total"
 sourcedir  = src
 
 modules    = Exercises.Test.State

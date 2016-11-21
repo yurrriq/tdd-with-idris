@@ -1,6 +1,6 @@
 package typedriven
 
-opts       = "--total --ibcsubdir ../_build"
+opts       = "--total"
 sourcedir  = src
 
 modules    = Exercises.GettingStarted
@@ -12,6 +12,6 @@ readme     = README.org
 license    = MIT
 author     = "Eric Bailey"
 
-homepage   = https://github.com/yurrriq/learning-idris
-sourceloc  = https://github.com/yurrriq/learning-idris
-bugtracker = https://github.com/yurrriq/learning-idris/issues
+homepage   = https://github.com/yurrriq/tdd-with-idris
+sourceloc  = https://github.com/yurrriq/tdd-with-idris
+bugtracker = https://github.com/yurrriq/tdd-with-idris/issues
