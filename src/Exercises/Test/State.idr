@@ -1,17 +1,16 @@
 -- --------------------------------------------------------------- [ State.idr ]
--- Module      : Exercise.Test.State
+-- Module      : Exercises.Test.State
 -- Description : Test covering the Chapter 12 exercises in Edwin Brady's
 --               book, "Type-Driven Development with Idris."
 -- --------------------------------------------------------------------- [ EOH ]
-module Exercise.Test.State
+module Exercises.Test.State
 
-import Exercise.State
+import Exercises.State
 import Test.Helpers
 
 import Control.Monad.State
 import System
 
-%default total
 %access export
 
 testIncrease : IO ()

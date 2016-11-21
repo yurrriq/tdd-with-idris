@@ -1,13 +1,12 @@
 -- --------------------------------------------------------------- [ State.idr ]
--- Module      : Exercise.State
+-- Module      : Exercises.State
 -- Description : Solutions to the Chapter 12 exercises in Edwin Brady's
 --               book, "Type-Driven Development with Idris."
 -- --------------------------------------------------------------------- [ EOH ]
-module Exercise.State
+module Exercises.State
 
 import public Chapter.State
 
-%default total
 %access export
 
 -- -------------------------------------------------------- [ 12.1.5 Exercises ]

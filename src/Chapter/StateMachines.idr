@@ -10,8 +10,6 @@ import public Control.Monad.State
 -- NOTE: See 13.2.1
 import Data.Vect
 
-%default total
-
 -- ------------------------------------------------- [ 13.1.1 Modelling a Door ]
 
 namespace BadDoor

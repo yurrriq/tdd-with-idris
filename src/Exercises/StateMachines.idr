@@ -1,13 +1,12 @@
 -- ------------------------------------------------------- [ StateMachines.idr ]
--- Module      : Exercise.StateMachines
+-- Module      : Exercises.StateMachines
 -- Description : Solutions to the Chapter 13 exercises in Edwin Brady's
 --               book, "Type-Driven Development with Idris."
 -- --------------------------------------------------------------------- [ EOH ]
-module Exercise.StateMachines
+module Exercises.StateMachines
 
 import public Chapter.StateMachines
 
-%default total
 %access export
 
 -- -------------------------------------------------------- [ 13.1.5 Exercises ]

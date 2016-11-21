@@ -5,9 +5,6 @@
 -- --------------------------------------------------------------------- [ EOH ]
 module Exercises.GettingStarted
 
---import Chapter.GettingStarted
-
-%default total
 %access export
 
 -- ----------------------------------------------------------- [ 2.5 Exercises ]

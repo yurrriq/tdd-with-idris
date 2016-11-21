@@ -1,14 +1,13 @@
 package typedriven
 
-opts       = "--ibcsubdir ../_build"
+opts       = "--total --ibcsubdir ../_build"
 sourcedir  = src
 
-modules    = Chapter.State, Exercise.State
-           -- , Chapter.Streams
-           , Chapter.StateMachines, Exercise.StateMachines
+modules    = Exercises.GettingStarted
+           , Chapter.State, Exercises.State
+           , Chapter.StateMachines, Exercises.StateMachines
 
 brief      = "Solutions to exercises in Type-Driven Development with Idris."
-version    = 0.1.0
 readme     = README.md
 license    = MIT
 author     = "Eric Bailey"

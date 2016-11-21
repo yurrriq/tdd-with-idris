@@ -11,8 +11,6 @@ import public Control.Monad.State
 -- NOTE: See 12.3.6
 import Data.Primitives.Views
 
-%default total
-
 -- ----------------------------------------- [ 12.1 Working with Mutable State ]
 
 ||| Attach labels from `lbls` to elements of `vals`.
