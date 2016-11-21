@@ -32,22 +32,24 @@ pkgs       = typedriven
 opts       = "--total"
 sourcedir  = src
 
-modules    = Exercises.Test.State
+modules    = Exercises.Test.GettingStarted
+           , Exercises.Test.State
            , Test.Helpers
 
-tests      = Exercises.Test.State.runTest
+tests      = Exercises.Test.GettingStarted.runTest
+           , Exercises.Test.State.runTest
 
 brief      = "Test for exercises in Type-Driven Development with Idris."
 author     = "Eric Bailey"
 #+END_SRC
 ** nix-shell config
 #+BEGIN_SRC nix :tangle shell.nix
-  let
-    pkgs = import <nixpkgs> {};
-    stdenv = pkgs.stdenv;
-  in stdenv.mkDerivation {
-    name = "typedriven";
-    src = ./.;
-    buildInputs = with pkgs; [ haskellPackages.idris gcc gmp libffi ];
-  }
+let
+  pkgs = import <nixpkgs> {};
+  stdenv = pkgs.stdenv;
+in stdenv.mkDerivation {
+  name = "typedriven";
+  src = ./.;
+  buildInputs = with pkgs; [ haskellPackages.idris gcc gmp libffi ];
+}
 #+END_SRC

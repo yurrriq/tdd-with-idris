@@ -21,7 +21,7 @@ exercise1_3 = (('A', "B"), 'C')
 namespace Simple
 
   ||| Determine whether a string reads the same backwards as forwards.
-  ||| @ str A string to analyze.
+  ||| @ str a string to analyze
   palindrome : (str : String) -> Bool
   palindrome str = str == reverse str
 
@@ -29,21 +29,29 @@ namespace CaseInsensitive
 
   ||| Determine, case insensitively, whether a string reads the same backwards
   ||| as forwards.
-  ||| @ str A string to analyze.
+  ||| @ str a string to analyze
   palindrome : (str : String) -> Bool
   palindrome = Simple.palindrome . toLower
+
+namespace LongerThanN
+
+  ||| Return `True` iff `str` is longer than `len` characters and
+  ||| case-insensitively reads the same backwards as forwards.
+  ||| @ len the lower bound (exclusive) of string length
+  ||| @ str a string to analyze
+  palindrome : (len : Nat) -> (str : String) -> Bool
+  palindrome n str = length str > n && CaseInsensitive.palindrome str
 
 namespace LongerThan10
 
   ||| Return `True` iff `str` is longer than 10 characts and case-insensitively
   ||| reads the same backwards as forwards.
-  ||| @ str A string to analyze.
-  caseInsensitivePalindrome' : (str : String) -> Bool
-  caseInsensitivePalindrome' str =
-    length str > 10 && CaseInsensitive.palindrome str
+  ||| @ str a string to analyze
+  palindrome : (str : String) -> Bool
+  palindrome = LongerThanN.palindrome 10
 
 ||| Compute the number of words and number of characters in a string.
-||| @ str A string to analyze.
+||| @ str a string to analyze
 counts : (str : String) -> (Nat, Nat)
 counts str =
   let wordCount = length (words str)
@@ -51,7 +59,7 @@ counts str =
   in  (wordCount, charCount)
 
 ||| Return the largest ten values in a list.
-||| @ list A list of values contstrained by `Ord`.
+||| @ list a list of values contstrained by `Ord`
 topTen : Ord a => (list : List a) -> List a
 topTen = take 10 . sortBy (flip compare)
 
@@ -59,11 +67,11 @@ topTen = take 10 . sortBy (flip compare)
 syntax "cond$" [x] [b] [f] = if b then x else f x
 
 ||| Count the number of strings in list that are over a given length.
-||| @ len the lower bound (exclusive) of string length.
+||| @ len the lower bound (exclusive) of string length
 overLength : (len : Nat) -> List String -> Nat
 overLength len = foldr go 0
   where
     go : String -> Nat -> Nat
-    go str n = cond$ n (length str > n) S
+    go str n = cond$ n (length str > len) S
 
 -- --------------------------------------------------------------------- [ EOF ]

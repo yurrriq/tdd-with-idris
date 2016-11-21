@@ -6,10 +6,12 @@ pkgs       = typedriven
 opts       = "--total"
 sourcedir  = src
 
-modules    = Exercises.Test.State
+modules    = Exercises.Test.GettingStarted
+           , Exercises.Test.State
            , Test.Helpers
 
-tests      = Exercises.Test.State.runTest
+tests      = Exercises.Test.GettingStarted.runTest
+           , Exercises.Test.State.runTest
 
 brief      = "Test for exercises in Type-Driven Development with Idris."
 author     = "Eric Bailey"
