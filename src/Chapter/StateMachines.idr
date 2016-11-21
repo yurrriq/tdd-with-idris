@@ -223,10 +223,20 @@ runStack stk (Pure x)     = pure (x, stk)
 runStack stk (x >>= f)    = do (x', newStk) <- runStack stk x
                                runStack newStk (f x')
 
-doAdd : StackCmd () Integer (S (S height)) (S height)
-doAdd = do val1 <- Pop
-           val2 <- Pop
-           Push (val1 + val2)
+printResult : StackCmd () Integer (S height) (S height)
+printResult = do result <- Top
+                 PutStr (show result ++ "\n")
+
+doBinOp : (op : Integer -> Integer -> Integer) ->
+          StackCmd () Integer (S (S height)) (S height)
+doBinOp op = do val1 <- Pop
+                val2 <- Pop
+                -- NOTE: The arguments are ordered this way because subtraction
+                -- is not commutative, while addition and multiplication are,
+                -- e.g. given 2 <RET> 1 <RET> - <RET>, stackCalc should print 1,
+                -- i.e. 2 - 1 = 1, as opposed to 1 - 2 = -1.
+                Push (val2 `op` val1)
+                printResult
 
 public export
 data StackIO : Nat -> Type -> Type where
@@ -257,29 +267,84 @@ run Dry _ _                  = pure ()
 public export
 data StkInput = Number Integer
               | Add
+              -- NOTE: Exercise 13.2.4.1
+              | Subtract
+              | Multiply
+              -- NOTE: Exercise 13.2.4.2
+              | Negate
+              -- NOTE: Exercise 13.2.4.3
+              | Discard
+              -- NOTE: Exercise 13.2.4.4
+              | Duplicate
 
 export
 strToInput : String -> Maybe StkInput
 strToInput "" = Nothing
-strToInput "+" = Just Add
-strToInput "-" = Just Subtract
-strToInput "*" = Just Multiply
+strToInput "add" = Just Add
+strToInput "subtract" = Just Subtract
+strToInput "multiply" = Just Multiply
+strToInput "negate" = Just Negate
+strToInput "discard" = Just Discard
+strToInput "duplicate" = Just Duplicate
 strToInput x = if all isDigit (unpack x)
                   then Just (Number (cast x))
                   else Nothing
 
 mutual
 
-  binOp : StackIO height Integer
+  tryBinOp : (op : Integer -> Integer -> Integer) -> StackIO height Integer
+  tryBinOp {height = S (S _)} op
+           = do doBinOp op
+                stackCalc
+  tryBinOp _
+           =  do PutStr "Fewer than two items on the stack\n"
+                 stackCalc
 
   tryAdd : StackIO height Integer
-  tryAdd {height = S (S h)}
-         = do doAdd
-              result <- Top
-              PutStr (show result ++ "\n")
-              stackCalc
-  tryAdd = do PutStr "Fewer than two items on the stack\n"
-              stackCalc
+  tryAdd = tryBinOp (+)
+
+-- ------------------------------------------------------- [ Exercise 13.2.4.1 ]
+
+  trySubtract : StackIO height Integer
+  trySubtract = tryBinOp (-)
+
+  tryMultiply : StackIO height Integer
+  tryMultiply = tryBinOp (*)
+  
+-- -------------------------------------------------- [ Unary operation helper ]
+  
+  emptyStack : StackIO height Integer
+  emptyStack = do PutStr "Stack is empty\n"
+                  stackCalc
+  
+-- ------------------------------------------------------- [ Exercise 13.4.2.2 ]
+
+  tryNegate : StackIO height Integer
+  tryNegate {height = S _}
+            = do val <- Pop
+                 Push (negate val)
+                 printResult
+                 stackCalc
+  tryNegate = emptyStack
+
+-- ------------------------------------------------------- [ Exercise 13.4.2.3 ]
+
+  tryDiscard : StackIO height Integer
+  tryDiscard {height = S _}
+             = do val <- Pop
+                  PutStr $ "Discarded " ++ show val ++ "\n"
+                  stackCalc
+  tryDiscard = emptyStack
+
+-- ------------------------------------------------------- [ Exercise 13.4.2.4 ]
+
+  tryDuplicate : StackIO height Integer
+  tryDuplicate {height = S _}
+               = do val <- Top
+                    Push val
+                    PutStr $ "Duplicated " ++ show val ++ "\n"
+                    stackCalc
+  tryDuplicate = emptyStack
 
 -- -----------------------------------------------------------------------------
 
@@ -294,8 +359,14 @@ mutual
                                             stackCalc
                       Just Add => tryAdd
                       -- NOTE: Exercise 13.2.4.1
-                      Just Subtract => ?trySubtract
-                      Just Multiply => ?tryMultiply
+                      Just Subtract => trySubtract
+                      Just Multiply => tryMultiply
+                      -- NOTE: Exercise 13.2.4.2
+                      Just Negate => tryNegate
+                      -- NOTE: Exercise 13.2.4.3
+                      Just Discard => tryDiscard
+                      -- NOTE: Exercise 13.2.4.4
+                      Just Duplicate => tryDuplicate
 
 namespace StackCalculator
 
