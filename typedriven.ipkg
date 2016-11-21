@@ -10,7 +10,7 @@ modules    = Chapter.State, Exercise.State
 brief      = "Solutions to exercises in Type-Driven Development with Idris."
 version    = 0.1.0
 readme     = README.md
--- license    = BSD-3
+license    = MIT
 author     = "Eric Bailey"
 
 homepage   = https://github.com/yurrriq/learning-idris
