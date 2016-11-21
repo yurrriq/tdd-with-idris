@@ -1,0 +1,53 @@
+#+STARTUP: showall
+* Type-Driven Development with Idris
+Solutions to exercies from [[https://www.manning.com/books/type-driven-development-with-idris][/Type-Driven Development with Idris/]] by [[https://github.com/edwinb][Edwin Brady]],
+and tests thereof.
+** Package
+#+BEGIN_SRC idris-ipkg :tangle typedriven.ipkg
+package typedriven
+
+opts       = "--total --ibcsubdir ../_build"
+sourcedir  = src
+
+modules    = Exercises.GettingStarted
+           , Chapter.State, Exercises.State
+           , Chapter.StateMachines, Exercises.StateMachines
+
+brief      = "Solutions to exercises in Type-Driven Development with Idris."
+readme     = README.org
+license    = MIT
+author     = "Eric Bailey"
+
+homepage   = https://github.com/yurrriq/learning-idris
+sourceloc  = https://github.com/yurrriq/learning-idris
+bugtracker = https://github.com/yurrriq/learning-idris/issues
+#+END_SRC
+** Test package
+#+BEGIN_SRC idris-ipkg :tangle test.ipkg
+package typedriven.test
+
+pkgs       = typedriven
+           , test
+
+opts       = "--total --ibcsubdir ../_build"
+sourcedir  = src
+
+modules    = Exercises.Test.State
+           , Test.Helpers
+
+tests      = Exercises.Test.State.runTest
+
+brief      = "Test for exercises in Type-Driven Development with Idris."
+author     = "Eric Bailey"
+#+END_SRC
+** nix-shell config
+#+BEGIN_SRC nix :tangle shell.nix
+  let
+    pkgs = import <nixpkgs> {};
+    stdenv = pkgs.stdenv;
+  in stdenv.mkDerivation {
+    name = "typedriven";
+    src = ./.;
+    buildInputs = with pkgs; [ haskellPackages.idris gcc gmp libffi ];
+  }
+#+END_SRC

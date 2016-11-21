@@ -8,7 +8,7 @@ modules    = Exercises.GettingStarted
            , Chapter.StateMachines, Exercises.StateMachines
 
 brief      = "Solutions to exercises in Type-Driven Development with Idris."
-readme     = README.md
+readme     = README.org
 license    = MIT
 author     = "Eric Bailey"
 
