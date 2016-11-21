@@ -256,8 +256,9 @@ mutual
             PutStr $ show st ++ "\n"
             let solution = x * y
             QuitCmd <- readInput $ show x ++ " * " ++ show y ++ "? "
-              | Answer solution => correct
-              | Answer _        => wrong solution
+              | Answer answer => if solution == answer
+                                    then correct
+                                    else wrong solution
             Quit st
 
 -- ----------------------------------------------------------- [ Listing 12.32 ]
