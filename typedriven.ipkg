@@ -6,6 +6,9 @@ modules    = -- Exercise modules
            , Exercises.Chapter8, Exercises.Chapter9, Exercises.Chapter10
            , Exercises.Chapter11
 
+           , Chapter.State
+           -- , Chapter.Streams
+           , Chapter.StateMachines
              -- Interactive programs
            -- , datastore, guessnumber, longerstring
 
