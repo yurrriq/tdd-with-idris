@@ -7,10 +7,12 @@ opts       = "--total"
 sourcedir  = src
 
 modules    = Exercises.Test.GettingStarted
+           , Exercises.Test.Interactive
            , Exercises.Test.State
            , Test.Helpers
 
 tests      = Exercises.Test.GettingStarted.runTest
+           , Exercises.Test.Interactive.runTest
            , Exercises.Test.State.runTest
 
 brief      = "Test for exercises in Type-Driven Development with Idris."

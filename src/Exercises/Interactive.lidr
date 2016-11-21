@@ -1,20 +1,15 @@
 = Chapter 3
 
-> module Exercises.Chapter3
+> module Exercises.Interactive
 
 
 Import `Data.Vect`, because we'll need it later.
 
-> import Data.Vect
-
-
-Have Idris check that each function is total.
-
-> %default total
+> import public Data.Vect
 
 Export functions by default.
 
-> %access public export
+> %access export
 
 
 == 3.2.4 Exercises
@@ -118,40 +113,38 @@ to `lst` to avoid confusion/shadowing.
 
 === 3. `map : (a -> b) -> List a -> List b`
 
-> namespace List
->   map : (a -> b) -> List a -> List b
+> my_map : (a -> b) -> List a -> List b
 
 Press `M-RET d` on `map` to add a clause.
 
 ```idris
-  map f xs = ?map_rhs
+my_map f xs = ?my_map_rhs
 ```
 
 Case split (`C-c C-c`) on `xs`.
 
 ```idris
-  map f [] = ?map_rhs_1
-  map f (x :: xs) = ?map_rhs_2
+my_map f [] = ?my_map_rhs_1
+my_map f (x :: xs) = ?my_map_rhs_2
 ```
 
-Have Idris fill in `?map_rhs_1` (`M-RET p`).
+Have Idris fill in `?my_map_rhs_1` (`M-RET p`).
 
->   map f [] = []
+> my_map f [] = []
 
-Fill in `?map_rhs_2` manually.
+Fill in `?my_map_rhs_2` manually.
 
->   map f (x :: xs) = f x :: map f xs
+> my_map f (x :: xs) = f x :: my_map f xs
 
 
 === 4. `map : (a -> b) -> Vect n a -> Vect n b`
 
-> namespace Vect
->   map : (a -> b) -> Vect n a -> Vect n b
+> my_vect_map : (a -> b) -> Vect n a -> Vect n b
 
-Add a `map` clause (`M-RET d`).
+Add a `my_vect_map` clause (`M-RET d`).
 
 ```idris
-  map f xs = ?map_rhs
+my_vect_map f xs = ?my_vect_map_rhs
 ```
 
 ~~Case split (`C-c C-c`) on `xs`.~~
@@ -160,14 +153,14 @@ N.B. That doesn't seem to work, for whatever reason,
 so add the clauses manually.
 
 ```idris
-  map f [] = ?map_rhs_1
-  map f (x :: xs) = ?map_rhs_2
+my_vect_map f [] = ?my_vect_map_rhs_1
+my_vect_map f (x :: xs) = ?my_vect_map_rhs_2
 ```
 
 Emacs or Idris seems upset about the holes too, so fill them in manually.
 
->   map f [] = []
->   map f (x :: xs) = f x :: map f xs
+> my_vect_map f [] = []
+> my_vect_map f (x :: xs) = f x :: map f xs
 
 
 == 3.3.3 Exercises
@@ -246,9 +239,11 @@ transpose_mat (x :: xs) = zipWith (::) x (transpose_mat xs)
 
 *Define* `create_empties`.
 
+> public export
 > create_empties : Vect n (Vect 0 elem)
 > create_empties {n} = replicate n []
->
+
+> public export
 > transpose_mat : Vect m (Vect n elem) -> Vect n (Vect m elem)
 > transpose_mat [] = create_empties
 > transpose_mat (x :: xs) = zipWith (::) x (transpose_mat xs)
@@ -256,6 +251,7 @@ transpose_mat (x :: xs) = zipWith (::) x (transpose_mat xs)
 
 === 2. `addMatrix`
 
+> public export
 > addMatrix : Num numType =>
 >             Vect rows (Vect cols numType) -> Vect rows (Vect cols numType) ->
 >             Vect rows (Vect cols numType)
@@ -264,6 +260,7 @@ transpose_mat (x :: xs) = zipWith (::) x (transpose_mat xs)
 
 === 3. `multMatrix`
 
+> public export
 > multMatrix : Num numType =>
 >              Vect n (Vect m numType) -> Vect m (Vect p numType) ->
 >              Vect n (Vect p numType)
@@ -289,15 +286,3 @@ transpose_mat (x :: xs) = zipWith (::) x (transpose_mat xs)
   101 & 112 & 123 & 134
   \end{pmatrix}
 \]
-
-> testMultMatrix : [ [  1,   2]
->                  , [  3,   4]
->                  , [  5,   6] ]
->                  `multMatrix`
->                  [ [  7,   8,   9,  10]
->                  , [ 11,  12,  13,  14] ]
->                  =
->                  [ [ 29,  32,  35,  38]
->                  , [ 65,  72,  79,  86]
->                  , [101, 112, 123, 134] ]
-> testMultMatrix = Refl

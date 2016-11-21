@@ -4,6 +4,7 @@ opts       = "--total"
 sourcedir  = src
 
 modules    = Exercises.GettingStarted
+           , Exercises.Interactive
            , Chapter.State, Exercises.State
            , Chapter.StateMachines, Exercises.StateMachines
 
