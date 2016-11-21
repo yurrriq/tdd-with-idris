@@ -1,39 +1,48 @@
-SRC       ?= src/Exercises
-BIN       ?= bin
-OUT       ?= out
-LIDR_SRCS := $(notdir $(wildcard $(SRC)/*.lidr))
-BIN_SRCS  := $(notdir $(wildcard bin/*.idr))
-BINS      := $(addprefix $(BIN)/, $(BIN_SRCS:.idr=))
-MDS       := $(addprefix $(OUT)/, $(LIDR_SRCS:.lidr=.md))
-PANDOC     = pandoc -f markdown+lhs -t markdown_github
-SED_HACK   = sed 's/ sourceCode/idris/'
-CLEAN      = rm -f
+PKG   ?= typedriven
+TEST  ?= test
 
-all: check
+ifeq "${DEBUG}" "1"
+	OPTS := --log 4
+endif
 
-clobber: clean # clean-out
-	rm -rf _build/
+# If we're in a Nix shell, call idris directly,
+# otherwise use nix-shell --run "idris ..."
+# N.B. This requires the -e flag to be set for make.
+ifeq "${IN_NIX_SHELL}" "1"
+	idris = idris ${OPTS} ${1}
+else
+	idris = nix-shell --run "idris ${OPTS} ${1}"
+endif
+
+.PHONY: build clean check clobber install rebuild test docs docs-clean
+
+build:
+	$(call idris,--build ${PKG}.ipkg)
 
 clean:
-	idris --clean typedriven.ipkg
-	find . -name '*.ibc' -delete
+	$(call idris,--clean ${PKG}.ipkg)
 
-clean-out: ; $(CLEAN) $(MDS)
+check: clobber
+	$(call idris,--checkpkg ${PKG}.ipkg)
 
-compile: $(BINS)
+clobber: clean docs-clean
+	find . -name "*.ibc" -delete
 
-markdown: $(MDS)
+install:
+	$(call idris,--install ${PKG}.ipkg)
 
-# grip: markdown; @grip $(MDS)
+rebuild: clean lib
 
-$(OUT)/%.md: $(SRC)/%.lidr; $(PANDOC) $< | $(SED_HACK) > $@
+test: clean install
+	$(call idris,--testpkg ${TEST}.ipkg)
 
-$(BIN)/%: bin/%.idr; idris -i src --total -o $@ $<
+docs: build docs-clean
+	$(call idris,--mkdoc ${PKG}.ipkg) \
+	&& rm -rf docs >/dev/null \
+	&& mv ${PKG}_doc docs
 
-build: ; idris --build typedriven.ipkg
+docs-clean:
+	rm -rf ${PKG}_doc docs >/dev/null
 
-check: ; idris --checkpkg typedriven.ipkg
-
-test: ; idris --testpkg test.ipkg
-
-doc: ; idris --mkdoc typedriven.ipkg
+bin/%: bin/%.idr
+	$(call idris,-i src --total -o $@ $<)
