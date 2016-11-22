@@ -2,9 +2,10 @@
 #+OPTIONS: toc:nil
 
 * Type-Driven Development with Idris
-[[https://travis-ci.org/yurrriq/tdd-with-idris][file:https://travis-ci.org/yurrriq/tdd-with-idris.svg?branch=master]]
+[[https://travis-ci.org/yurrriq/tdd-with-idris][file:https://travis-ci.org/yurrriq/tdd-with-idris.svg]]
 
-/Solutions to exercies from [[https://www.manning.com/books/type-driven-development-with-idris][Type-Driven Development with Idris]] by [[https://github.com/edwinb][Edwin Brady]], and tests thereof./
+/Solutions to exercises from [[https://www.manning.com/books/type-driven-development-with-idris][Type-Driven Development with Idris]] by [[https://github.com/edwinb][Edwin Brady]],
+and tests thereof./
 ** Package
 #+BEGIN_SRC idris-ipkg :tangle typedriven.ipkg
 package typedriven
