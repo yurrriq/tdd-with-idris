@@ -56,6 +56,6 @@ let
 in
 {
   idris = with-packages(with idrisPackages; [
-    prelude base contrib effects pruviloj test typedriven
+    prelude base effects test typedriven # contrib pruviloj
   ]);
 }
