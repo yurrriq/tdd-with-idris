@@ -1,12 +1,10 @@
 ||| An interactive data store.
-module DataStore
+module Main
 
 import Control.Arrow
 import Control.Category
 import Data.Morphisms
 import Data.Vect
-
-%default total
 
 ------------------------------------------- [ Exercise 6.3.1 // Revised 10.3.2 ]
 
@@ -85,9 +83,9 @@ filterKeys test store with (storeView store)
 
 ||| An data store command.
 data Command : Schema -> Type where
-   ||| Set the schema.
-   ||| @ newschema the schema to set.
-   SetSchema : (newschema : Schema)            -> Command schema
+   -- ||| Set the schema.
+   -- ||| @ newschema the schema to set.
+   -- SetSchema : (newschema : Schema)            -> Command schema
    ||| Add an item.
    ||| @ item an item to add.
    Add       : (item      : SchemaType schema) -> Command schema
@@ -147,7 +145,7 @@ parseCommand schema "get"    val   = if all isDigit (unpack val)
 parseCommand schema "search" ""    = Nothing
 parseCommand schema "search" query = Just (Search query)
 parseCommand schema "quit"   _     = Just Quit
-parseCommand schema "schema" rest  = pure SetSchema <*> parseSchema (words rest)
+-- parseCommand schema "schema" rest  = pure SetSchema <*> parseSchema (words rest)
 parseCommand schema _        _     = Nothing
 
 ||| Attempt to parse a string as a command.
@@ -226,14 +224,13 @@ search query store with (doSearch query (items store))
   | matches = Just (unwords (map format matches) ++ "\n", store)
       where format (k,x) = "(" ++ show k ++ ", " ++ x ++ ")"
 
-setSchema : (schema' : Schema) -> (store : DataStore schema) -> Maybe (DataStore schema')
-setSchema schema' (MkData Z items) = Just (MkData _ [])
-setSchema _       _                = Nothing
+-- setSchema : (schema' : Schema) -> (store : DataStore schema) -> Maybe (DataStore schema')
+-- setSchema schema' (MkData Z items) = Just (MkData _ [])
+-- setSchema _       _                = Nothing
 
 ||| Process user input from the REPL.
 ||| @ store a data store
 ||| @ input a user-entered string, possibly representing a valid command.
-partial
 processInput : (store : DataStore schema) -> (input : String) -> Maybe (String, DataStore schema)
 -- FIXME: This is smelly, but gets the job done.
 processInput store "get"     = getAllEntries store
@@ -251,3 +248,5 @@ processInput {schema} store input with (parse schema input)
 partial
 main : IO ()
 main = replWith (the (DataStore (SString .+. SString .+. SInt)) empty) "> " processInput
+
+-- --------------------------------------------------------------------- [ EOF ]

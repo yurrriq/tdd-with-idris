@@ -1,0 +1,7 @@
+package typedriven.datastore
+
+pkgs       = typedriven
+opts       = "--total -i ../src/Main/datastore"
+modules    = Main
+main       = Main
+executable = datastore
