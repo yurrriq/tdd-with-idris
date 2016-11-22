@@ -308,13 +308,13 @@ mutual
 
   tryMultiply : StackIO height Integer
   tryMultiply = tryBinOp (*)
-  
+
 -- -------------------------------------------------- [ Unary operation helper ]
-  
+
   emptyStack : StackIO height Integer
   emptyStack = do PutStr "Stack is empty\n"
                   stackCalc
-  
+
 -- ------------------------------------------------------- [ Exercise 13.4.2.2 ]
 
   tryNegate : StackIO height Integer
