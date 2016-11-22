@@ -51,13 +51,13 @@ testTopTen =
 runTest : IO ()
 runTest = do putStrLn "Testing Chapter 2: Getting Started"
              putStrLn infoLine
-             runTests [ testPalindrome "racecarz" True
+             runTests [ testPalindrome "racecar" True
                       , testPalindrome "race car" False
                       , testPalindromeCI "Racecar" True
-                      , testLongPalindrome "racecarz" False
+                      , testLongPalindrome "racecar" False
                       , testLongPalindrome "able was i ere i saw elba" True
-                      , testPalindromeLen 10 "racecarz" False
-                      , testPalindromeLen 5 "racecarz" True
+                      , testPalindromeLen 10 "racecar" False
+                      , testPalindromeLen 5 "racecar" True
                       , testCounts
                       , testTopTen
                       , testOverLength
