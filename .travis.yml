@@ -1,0 +1,2 @@
+language: nix
+script: nix-build | egrep '\+{40}' && exit 1
