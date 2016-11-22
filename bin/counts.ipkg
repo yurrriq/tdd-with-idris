@@ -1,0 +1,7 @@
+package typedriven.counts
+
+pkgs       = typedriven
+opts       = "--total -i ../src/Main/counts"
+modules    = Main
+main       = Main
+executable = counts

@@ -1,0 +1,7 @@
+package typedriven.palindrome
+
+pkgs       = typedriven
+opts       = "--total -i ../src/Main/palindrome"
+modules    = Main
+main       = Main
+executable = palindrome
