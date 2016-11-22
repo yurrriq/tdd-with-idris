@@ -3,3 +3,4 @@
 !*.idr
 !*.ipkg
 !Makefile
+!shell.nix
