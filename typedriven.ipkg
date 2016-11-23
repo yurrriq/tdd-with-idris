@@ -5,6 +5,7 @@ sourcedir  = src
 
 modules    = Exercises.GettingStarted
            , Exercises.Interactive
+           , Chapter.DataTypes, Exercises.DataTypes
            , Chapter.State, Exercises.State
            , Chapter.StateMachines, Exercises.StateMachines
 

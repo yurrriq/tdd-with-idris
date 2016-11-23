@@ -8,6 +8,7 @@ sourcedir  = src
 
 modules    = Exercises.Test.GettingStarted
            , Exercises.Test.Interactive
+           , Exercises.Test.DataTypes
            , Exercises.Test.State
            , Test.Helpers
 
