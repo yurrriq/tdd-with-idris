@@ -1,7 +1,6 @@
 package typedriven.test
 
-pkgs       = typedriven
-           , test
+pkgs       = test
 
 opts       = "--total"
 sourcedir  = src
@@ -11,10 +10,6 @@ modules    = Exercises.Test.GettingStarted
            , Exercises.Test.DataTypes
            , Exercises.Test.State
            , Test.Helpers
-
-tests      = Exercises.Test.GettingStarted.runTest
-           , Exercises.Test.Interactive.runTest
-           , Exercises.Test.State.runTest
 
 brief      = "Test for exercises in Type-Driven Development with Idris."
 author     = "Eric Bailey"

@@ -6,7 +6,11 @@
 module Exercises.Test.DataTypes
 
 import Exercises.DataTypes
+
 import Test.Helpers
+
+import Data.Vect
+%hide Data.Vect.overLength
 
 %access export
 
@@ -20,7 +24,7 @@ implementation Show (Tree Integer) where
 
 testListToTree : IO Bool
 testListToTree =
-  "listToTree" `assertEqual` Node (Node Empty 1 Empty)
+  "listToTree" `assertEqual'` Node (Node Empty 1 Empty)
                                   2
                                   (Node (Node Empty 3 (Node Empty 4 Empty))
                                         5
@@ -29,14 +33,15 @@ testListToTree =
 
 testTreeToList : IO Bool
 testTreeToList =
-  "treeToList" `assertEqual` [1..9] $
+  "treeToList" `assertEqual'` [1..9] $
   treeToList (listToTree [4,1,8,7,2,3,9,5,6])
 
-runTest : IO ()
-runTest = do putStrLn "Testing Chapter 4: User Defined Data Types"
-             putStrLn infoLine
-             runTests [ testListToTree
-                      , testTreeToList
-                      ]
+allTests : List (IO Bool)
+allTests = [ testListToTree
+           , testTreeToList
+           ]
+
+runTests : IO (Vect (length DataTypes.allTests) Bool)
+runTests = testChapter "4: User Defined Data Types" allTests
 
 -- --------------------------------------------------------------------- [ EOF ]

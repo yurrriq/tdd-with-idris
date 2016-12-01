@@ -1,6 +1,5 @@
 { pkgs ? import <nixpkgs> {}
-, date ? "2016-11-22"
-, version ? date
+, date ? "2016-11-30"
 , doCheck ? true
 }:
 let
@@ -11,10 +10,10 @@ let
    name = "test-${date}";
 
    src = fetchFromGitHub {
-     owner = "jfdm";
+     owner = "yurrriq";
      repo = "idris-testing";
-     rev = "24a75bb71350fd64b00b72f69daa93530b49e61a";
-     sha256 = "1k2qqz9vn9h8g4zxslx61z2g9ks5y29y3fmrlv7vawymkhcjrcl5";
+     rev = "1849cdc";
+     sha256 = "03z0qzhc5za1p5958ig2amhzbimy11iqf3x6rg4hzayffm3say4h";
    };
 
    buildPhase = "${idris}/bin/idris --build test.ipkg";
@@ -23,24 +22,26 @@ let
    propagatedBuildInputs = with idrisPackages; [ prelude base effects ];
 
    meta = with lib; {
-     description = "Parser combinators for Idris";
+     description = "Simple Testing Library";
      homepage =  "https://github.com/jfdm/idris-testing";
      license = licenses.bsd3;
      maintainers = [ "Jan de Muijnck-Hughes" ];
      inherit (idris.meta) platforms;
    };
  };
- version = date;
- pkgName = "typedriven";
- typedriven = build-idris-package {
-  name = pkgName;
-  version = version;
+ typedriven = build-idris-package rec {
+  pkg = "typedriven";
+  name = pkg;
+  version = date;
 
   src = ./.;
-  buildPhase = "${idris}/bin/idris --build ${pkgName}.ipkg";
-  checkPhase = "${idris}/bin/idris --testpkg test.ipkg";
-  doCheck = doCheck;
-  installPhase = "${idris}/bin/idris --install ${pkgName}.ipkg";
+  buildPhase = "${idris}/bin/idris --build ${pkg}.ipkg";
+  checkPhase = ''
+    ${idris}/bin/idris --build test.ipkg
+    ${idris}/bin/idris -i src --build bin/test.ipkg
+    ./runtests
+  '';
+  installPhase = "${idris}/bin/idris --install ${pkg}.ipkg";
   propagatedBuildInputs = with idrisPackages; [ prelude base test ] ++ [ gcc ];
 
   meta = with lib; {

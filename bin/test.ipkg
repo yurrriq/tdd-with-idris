@@ -1,0 +1,7 @@
+package typedriven.runtests
+
+pkgs       = test
+opts       = "--total -i src/Main/test"
+modules    = Main
+main       = Main
+executable = runtests
