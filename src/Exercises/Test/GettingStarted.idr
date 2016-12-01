@@ -53,7 +53,7 @@ testTopTen =
   topTen [1..100]
 
 allTests : List (IO Bool)
-allTests = [ testPalindrome "racecar" True
+allTests = [ testPalindrome "racecarz" True
            , testPalindrome "race car" False
            , testPalindromeCI "Racecar" True
            , testLongPalindrome "racecar" False
