@@ -1,11 +1,14 @@
 package typedriven
 
+pkgs       = effects
+
 opts       = "--total"
 sourcedir  = src
 
 modules    = Exercises.GettingStarted
            , Exercises.Interactive
            , Chapter.DataTypes, Exercises.DataTypes
+           , Exercises.InteractivePrograms
            , Chapter.State, Exercises.State
            , Chapter.StateMachines, Exercises.StateMachines
 
