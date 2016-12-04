@@ -47,7 +47,7 @@ namespace Matter
        Freeze : MatterCmd () Liquid Solid
 
        Pure : ty -> MatterCmd ty state state
-       (>>=) : MatterCmd a state1 stat2 ->
+       (>>=) : MatterCmd a state1 state2 ->
                (a -> MatterCmd b state2 state3) ->
                MatterCmd b state1 state3
 
