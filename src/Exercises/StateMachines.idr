@@ -27,7 +27,7 @@ threeGuesses = do Try 10
                   Try 15
                   Pure ()
 
--- NOTE: Should not type check.
+-- NOTE: noGuesses should not type check.
 -- noGuesses : GuessCmd () 0 0
 -- noGuesses = do Try 10
 --                Pure ()
@@ -61,7 +61,7 @@ steamIce : MatterCmd () Gas Solid
 steamIce = do Condense
               Freeze
 
--- NOTE: Should not type check.
+-- NOTE: overMelt should not type check.
 -- overMelt : MatterCmd () Solid Gas
 -- overMelt = do Melt
 --               Melt

@@ -135,35 +135,31 @@ namespace MachineDo
 mutual
 
   vend : MachineIO (pounds, chocs)
-  vend {pounds = S _} {chocs = S _}
-       = do Vend
-            Display "Enjoy!"
-            machineLoop
-  vend {pounds = Z}
-       = do Display "Insert a coin"
-            machineLoop
-  vend {chocs = Z}
-       = do Display "Out of stock"
-            machineLoop
+  vend {pounds = S _} {chocs = S _} = do Vend
+                                         Display "Enjoy!"
+                                         machineLoop
+  vend {pounds = Z}                 = do Display "Insert a coin"
+                                         machineLoop
+  vend {chocs = Z}                  = do Display "Out of stock"
+                                         machineLoop
 
   refill : (num : Nat) -> MachineIO (pounds, chocs)
-  refill {pounds = Z} num
-         = do Refill num
-              machineLoop
-  refill _ = do Display "Can't refill: Coins in machine"
-                machineLoop
+  refill {pounds = Z} num = do Refill num
+                               machineLoop
+  refill _                = do Display "Can't refill: Coins in machine"
+                               machineLoop
 
   machineLoop : MachineIO (pounds, chocs)
   machineLoop = do Just x <- GetInput
                      | Nothing => do Display "Invalid input"
                                      machineLoop
                    case x of
-                        COIN => do InsertCoin
-                                   machineLoop
-                        VEND => vend
-                        CHANGE => do GetCoins
-                                     Display "Change returned"
-                                     machineLoop
+                        COIN       => do InsertCoin
+                                         machineLoop
+                        VEND       => vend
+                        CHANGE     => do GetCoins
+                                         Display "Change returned"
+                                         machineLoop
                         REFILL num => refill num
 
 -- ------------------------------------------------- [ 13.2.1 Stack Operations ]
@@ -277,26 +273,26 @@ data StkInput = Number Integer
 
 export
 strToInput : String -> Maybe StkInput
-strToInput "" = Nothing
-strToInput "add" = Just Add
-strToInput "subtract" = Just Subtract
-strToInput "multiply" = Just Multiply
-strToInput "negate" = Just Negate
-strToInput "discard" = Just Discard
+strToInput ""          = Nothing
+strToInput "add"       = Just Add
+strToInput "subtract"  = Just Subtract
+strToInput "multiply"  = Just Multiply
+strToInput "negate"    = Just Negate
+strToInput "discard"   = Just Discard
 strToInput "duplicate" = Just Duplicate
-strToInput x = if all isDigit (unpack x)
-                  then Just (Number (cast x))
-                  else Nothing
+strToInput x           = if all isDigit (unpack x)
+                            then Just (Number (cast x))
+                            else Nothing
 
 mutual
 
   tryBinOp : (op : Integer -> Integer -> Integer) -> StackIO height Integer
-  tryBinOp {height = S (S _)} op
-           = do doBinOp op
-                stackCalc
-  tryBinOp _
-           =  do PutStr "Fewer than two items on the stack\n"
-                 stackCalc
+  tryBinOp {height = S (S _)} op =
+      do doBinOp op
+         stackCalc
+  tryBinOp _ =
+      do PutStr "Fewer than two items on the stack\n"
+         stackCalc
 
   tryAdd : StackIO height Integer
   tryAdd = tryBinOp (+)
@@ -318,31 +314,26 @@ mutual
 -- ------------------------------------------------------- [ Exercise 13.4.2.2 ]
 
   tryNegate : StackIO height Integer
-  tryNegate {height = S _}
-            = do val <- Pop
-                 Push (negate val)
-                 printResult
-                 stackCalc
-  tryNegate = emptyStack
+  tryNegate {height = S _} = do Push (negate !Pop)
+                                printResult
+                                stackCalc
+  tryNegate                = emptyStack
 
 -- ------------------------------------------------------- [ Exercise 13.4.2.3 ]
 
   tryDiscard : StackIO height Integer
-  tryDiscard {height = S _}
-             = do val <- Pop
-                  PutStr $ "Discarded " ++ show val ++ "\n"
-                  stackCalc
-  tryDiscard = emptyStack
+  tryDiscard {height = S _} = do PutStr $ "Discarded " ++ show !Pop ++ "\n"
+                                 stackCalc
+  tryDiscard                = emptyStack
 
 -- ------------------------------------------------------- [ Exercise 13.4.2.4 ]
 
   tryDuplicate : StackIO height Integer
-  tryDuplicate {height = S _}
-               = do val <- Top
-                    Push val
-                    PutStr $ "Duplicated " ++ show val ++ "\n"
-                    stackCalc
-  tryDuplicate = emptyStack
+  tryDuplicate {height = S _} = do val <- Top
+                                   Push val
+                                   PutStr $ "Duplicated " ++ show val ++ "\n"
+                                   stackCalc
+  tryDuplicate                = emptyStack
 
 -- -----------------------------------------------------------------------------
 
@@ -351,20 +342,20 @@ mutual
   stackCalc = do PutStr "> "
                  input <- GetStr
                  case strToInput input of
-                      Nothing => do PutStr "Invalid input\n"
-                                    stackCalc
+                      Nothing         => do PutStr "Invalid input\n"
+                                            stackCalc
                       Just (Number x) => do Push x
                                             stackCalc
-                      Just Add => tryAdd
+                      Just Add        => tryAdd
                       -- NOTE: Exercise 13.2.4.1
-                      Just Subtract => trySubtract
-                      Just Multiply => tryMultiply
+                      Just Subtract   => trySubtract
+                      Just Multiply   => tryMultiply
                       -- NOTE: Exercise 13.2.4.2
-                      Just Negate => tryNegate
+                      Just Negate     => tryNegate
                       -- NOTE: Exercise 13.2.4.3
-                      Just Discard => tryDiscard
+                      Just Discard    => tryDiscard
                       -- NOTE: Exercise 13.2.4.4
-                      Just Duplicate => tryDuplicate
+                      Just Duplicate  => tryDuplicate
 
 namespace StackCalculator
 
