@@ -11,6 +11,7 @@ modules    = Exercises.GettingStarted
            , Exercises.InteractivePrograms
            , Chapter.State, Exercises.State
            , Chapter.StateMachines, Exercises.StateMachines
+           , Chapter.DependentStateMachines, Exercises.DependentStateMachines
 
 brief      = "Solutions to exercises in Type-Driven Development with Idris."
 readme     = README.org

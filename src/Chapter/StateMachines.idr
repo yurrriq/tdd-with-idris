@@ -61,7 +61,7 @@ namespace Door
        Close    : DoorCmd () DoorOpen   DoorClosed
 
        ||| Ring the bell of a closed door.
-       RingBell : DoorCmd () DoorClosed DoorClosed
+       RingBell : DoorCmd () state state -- NOTE: Exercise 13.1.5.1
 
        ||| Lift a value.
        Pure : ty -> DoorCmd ty state state
@@ -72,12 +72,13 @@ namespace Door
                (a -> DoorCmd b state2 state3) ->
                DoorCmd b state1 state3
 
-  ||| Starting with a closed door, ring the bell then open and close the door,
-  ||| resulting in a closed door and producing ().
+  ||| Starting with a closed door, ring the bell, open the door, ring the bell,
+  ||| and close the door, resulting in a closed door and producing ().
   export
   doorProg : DoorCmd () DoorClosed DoorClosed
   doorProg = do RingBell
                 Open
+                RingBell
                 Close
 
 -- -------------------------------------- [ 13.1.3 Modelling a Vending Machine ]
