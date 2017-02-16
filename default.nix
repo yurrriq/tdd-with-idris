@@ -12,8 +12,8 @@ let
    src = fetchFromGitHub {
      owner = "yurrriq";
      repo = "idris-testing";
-     rev = "1849cdc";
-     sha256 = "03z0qzhc5za1p5958ig2amhzbimy11iqf3x6rg4hzayffm3say4h";
+     rev = "8033dc1";
+     sha256 = "0hpisraaiag7rl1agm4y6qj9pva8m8kbvnlvy2y13xh005n71xaa";
    };
 
    buildPhase = "${idris}/bin/idris --build test.ipkg";
