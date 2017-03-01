@@ -1,8 +1,14 @@
+{ doCheck ? false }:
+
+with import <nixpkgs> { };
+
 let
-  pkgs = import <nixpkgs> {};
-  stdenv = pkgs.stdenv;
-in stdenv.mkDerivation {
-  name = "typedriven";
-  src = ./.;
-  buildInputs = with pkgs; [ haskellPackages.idris gcc gmp libffi ];
+  idris = callPackage ./pkgs/idris.nix { doCheck = doCheck; };
+in
+
+stdenv.mkDerivation rec {
+  name = "tdd-with-idris-${version}";
+  version = "0.0.1";
+
+  buildInputs = [ idris ];
 }
