@@ -1,5 +1,6 @@
 { doCheck ? true
 , gcc
+, libffi
 , callPackage
 , haskellPackages
 , idrisPackages
@@ -11,5 +12,7 @@ let
 in
 
 idrisPackages.with-packages(with idrisPackages; [
-  gcc prelude base effects test typedriven
+  gcc libffi
+  prelude base effects
+  test typedriven
 ])

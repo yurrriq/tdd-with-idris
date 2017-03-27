@@ -3,7 +3,7 @@
 with import <nixpkgs> { };
 
 let
-  idris = callPackage ./pkgs/idris.nix { doCheck = doCheck; };
+  idris = callPackage ./pkgs/idris.nix { inherit doCheck; };
 in
 
 stdenv.mkDerivation rec {
