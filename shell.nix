@@ -1,6 +1,6 @@
 { doCheck ? false }:
 
-with import <nixpkgs> { };
+with import <nixpkgs> {};
 
 let
   idris = callPackage ./pkgs/idris.nix { inherit doCheck; };

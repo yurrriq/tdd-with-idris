@@ -13,7 +13,7 @@ let
 in
 
 idrisPackages.build-idris-package {
-  pkg = pkg;
+  inherit pkg;
   name = pkg;
   version = date;
 

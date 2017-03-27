@@ -10,13 +10,18 @@ and tests thereof./
 #+BEGIN_SRC idris-ipkg :tangle typedriven.ipkg
 package typedriven
 
+pkgs       = effects
+
 opts       = "--total"
 sourcedir  = src
 
 modules    = Exercises.GettingStarted
            , Exercises.Interactive
+           , Chapter.DataTypes, Exercises.DataTypes
+           , Exercises.InteractivePrograms
            , Chapter.State, Exercises.State
            , Chapter.StateMachines, Exercises.StateMachines
+           , Chapter.DependentStateMachines, Exercises.DependentStateMachines
 
 brief      = "Solutions to exercises in Type-Driven Development with Idris."
 readme     = README.org
@@ -31,32 +36,34 @@ bugtracker = https://github.com/yurrriq/tdd-with-idris/issues
 #+BEGIN_SRC idris-ipkg :tangle test.ipkg
 package typedriven.test
 
-pkgs       = typedriven
-           , test
+pkgs       = test
 
 opts       = "--total"
 sourcedir  = src
 
 modules    = Exercises.Test.GettingStarted
            , Exercises.Test.Interactive
+           , Exercises.Test.DataTypes
            , Exercises.Test.State
            , Test.Helpers
-
-tests      = Exercises.Test.GettingStarted.runTest
-           , Exercises.Test.Interactive.runTest
-           , Exercises.Test.State.runTest
 
 brief      = "Test for exercises in Type-Driven Development with Idris."
 author     = "Eric Bailey"
 #+END_SRC
 ** nix-shell config
 #+BEGIN_SRC nix :tangle shell.nix
+{ doCheck ? false }:
+
+with import <nixpkgs> {};
+
 let
-  pkgs = import <nixpkgs> {};
-  stdenv = pkgs.stdenv;
-in stdenv.mkDerivation {
-  name = "typedriven";
-  src = ./.;
-  buildInputs = with pkgs; [ haskellPackages.idris gcc gmp libffi ];
+  idris = callPackage ./pkgs/idris.nix { inherit doCheck; };
+in
+
+stdenv.mkDerivation rec {
+  name = "tdd-with-idris-${version}";
+  version = "0.0.1";
+
+  buildInputs = [ idris ];
 }
 #+END_SRC

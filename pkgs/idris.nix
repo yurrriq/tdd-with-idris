@@ -7,8 +7,8 @@
 }:
 
 let
-  test = callPackage ./test.nix { doCheck = doCheck; };
-  typedriven = callPackage ./typedriven.nix { doCheck = doCheck; test = test; };
+  test = callPackage ./test.nix { inherit doCheck; };
+  typedriven = callPackage ./typedriven.nix { inherit doCheck test; };
 in
 
 idrisPackages.with-packages(with idrisPackages; [
